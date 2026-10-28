@@ -3,12 +3,13 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from .analysis import AnalysisBusyError, AnalysisNotFoundError, execute_analysis, get_analysis
+from .auth import authenticated_role, require_analyst, require_reviewer
 from .classification import (
     ClassificationResult,
     ControlledStubClassifier,
@@ -19,12 +20,27 @@ from .classification import (
 from .config import Settings
 from .database import get_session, initialize_database, mark_interrupted_analyses
 from .importer import ImportConflictError, import_pack
+from .reports import (
+    ReportServiceError,
+    create_report,
+    decide_report,
+    edit_report,
+    export_report,
+    get_report,
+    submit_report,
+)
 from .schemas import (
     AnalysisCreateRequest,
     AnalysisView,
     DatasetImportResponse,
     ErrorResponse,
     HealthResponse,
+    ReportCreateRequest,
+    ReportDecisionRequest,
+    ReportExportView,
+    ReportPatchRequest,
+    ReportSubmitRequest,
+    ReportView,
 )
 
 
@@ -75,6 +91,45 @@ async def missing_pack_handler(request: Request, exc: FileNotFoundError) -> JSON
             "error": {
                 "code": "input_pack_missing",
                 "message": str(exc),
+                "request_id": request.state.request_id,
+                "details": {},
+            }
+        },
+    )
+
+
+@app.exception_handler(ReportServiceError)
+async def report_error_handler(request: Request, exc: ReportServiceError) -> JSONResponse:
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error": {
+                "code": exc.code,
+                "message": str(exc),
+                "request_id": request.state.request_id,
+                "details": {},
+            }
+        },
+    )
+
+
+@app.exception_handler(HTTPException)
+async def http_error_handler(request: Request, exc: HTTPException) -> JSONResponse:
+    codes = {
+        401: "unauthorized",
+        403: "forbidden",
+        404: "not_found",
+        409: "conflict",
+        422: "invalid_request",
+        503: "service_unavailable",
+    }
+    return JSONResponse(
+        status_code=exc.status_code,
+        headers=exc.headers,
+        content={
+            "error": {
+                "code": codes.get(exc.status_code, "http_error"),
+                "message": str(exc.detail),
                 "request_id": request.state.request_id,
                 "details": {},
             }
@@ -159,4 +214,109 @@ def read_analysis(analysis_id: str, session: Session = Depends(get_session)) -> 
         return get_analysis(session, analysis_id)
     except AnalysisNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.post(
+    "/reports",
+    response_model=ReportView,
+    responses={404: {"model": ErrorResponse}, 409: {"model": ErrorResponse}},
+    tags=["reports"],
+)
+def create_report_endpoint(
+    payload: ReportCreateRequest,
+    request: Request,
+    actor: str = Depends(require_analyst),
+    session: Session = Depends(get_session),
+) -> ReportView:
+    return create_report(session, payload.analysis_id, actor, request.state.request_id)
+
+
+@app.get(
+    "/reports/{report_id}",
+    response_model=ReportView,
+    responses={404: {"model": ErrorResponse}},
+    tags=["reports"],
+)
+def read_report_endpoint(
+    report_id: str,
+    _role: str = Depends(authenticated_role),
+    session: Session = Depends(get_session),
+) -> ReportView:
+    return get_report(session, report_id)
+
+
+@app.patch(
+    "/reports/{report_id}",
+    response_model=ReportView,
+    responses={404: {"model": ErrorResponse}, 422: {"model": ErrorResponse}},
+    tags=["reports"],
+)
+def edit_report_endpoint(
+    report_id: str,
+    payload: ReportPatchRequest,
+    request: Request,
+    actor: str = Depends(require_analyst),
+    session: Session = Depends(get_session),
+) -> ReportView:
+    return edit_report(session, report_id, payload.content, actor, request.state.request_id)
+
+
+@app.post(
+    "/reports/{report_id}/submit",
+    response_model=ReportView,
+    responses={404: {"model": ErrorResponse}, 409: {"model": ErrorResponse}},
+    tags=["reports"],
+)
+def submit_report_endpoint(
+    report_id: str,
+    payload: ReportSubmitRequest,
+    request: Request,
+    actor: str = Depends(require_analyst),
+    session: Session = Depends(get_session),
+) -> ReportView:
+    return submit_report(
+        session, report_id, payload.version_id, actor, request.state.request_id
+    )
+
+
+@app.post(
+    "/reports/{report_id}/decision",
+    response_model=ReportView,
+    responses={404: {"model": ErrorResponse}, 409: {"model": ErrorResponse}},
+    tags=["reports"],
+)
+def decide_report_endpoint(
+    report_id: str,
+    payload: ReportDecisionRequest,
+    request: Request,
+    actor: str = Depends(require_reviewer),
+    session: Session = Depends(get_session),
+) -> ReportView:
+    return decide_report(
+        session,
+        report_id,
+        payload.version_id,
+        payload.decision,
+        payload.comment,
+        actor,
+        request.state.request_id,
+    )
+
+
+@app.get(
+    "/reports/{report_id}/export",
+    response_model=ReportExportView,
+    responses={404: {"model": ErrorResponse}, 409: {"model": ErrorResponse}},
+    tags=["reports"],
+)
+def export_report_endpoint(
+    report_id: str,
+    request: Request,
+    version_id: str | None = Query(default=None),
+    actor: str = Depends(authenticated_role),
+    session: Session = Depends(get_session),
+) -> ReportExportView:
+    return export_report(
+        session, report_id, version_id, actor, request.state.request_id
+    )
 

@@ -110,6 +110,7 @@ class AnalysisRun(Base):
     dataset: Mapped[Dataset] = relationship(back_populates="analysis_runs")
     attempts: Mapped[list[ModelAttemptRecord]] = relationship(back_populates="analysis_run")
     results: Mapped[list[ResponseClassificationRecord]] = relationship(back_populates="analysis_run")
+    report: Mapped[Report | None] = relationship(back_populates="analysis_run")
 
 
 class ModelAttemptRecord(Base):
@@ -152,6 +153,91 @@ class ResponseClassificationRecord(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
     analysis_run: Mapped[AnalysisRun] = relationship(back_populates="results")
+    report_evidence_links: Mapped[list[ReportEvidenceLink]] = relationship(
+        back_populates="response_result"
+    )
+
+
+class Report(Base):
+    __tablename__ = "reports"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    analysis_run_id: Mapped[str] = mapped_column(
+        ForeignKey("analysis_runs.id"), unique=True, index=True
+    )
+    current_version_id: Mapped[str | None] = mapped_column(String(36), nullable=True)
+    created_by: Mapped[str] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+    analysis_run: Mapped[AnalysisRun] = relationship(back_populates="report")
+    versions: Mapped[list[ReportVersion]] = relationship(
+        back_populates="report", cascade="all, delete-orphan"
+    )
+
+
+class ReportVersion(Base):
+    __tablename__ = "report_versions"
+    __table_args__ = (UniqueConstraint("report_id", "version_number", name="uq_report_version"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    report_id: Mapped[str] = mapped_column(ForeignKey("reports.id"), index=True)
+    version_number: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(32), index=True)
+    content: Mapped[dict] = mapped_column(JSON)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    created_by: Mapped[str] = mapped_column(String(128))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    submitted_by: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    report: Mapped[Report] = relationship(back_populates="versions")
+    evidence_links: Mapped[list[ReportEvidenceLink]] = relationship(
+        back_populates="report_version", cascade="all, delete-orphan"
+    )
+    decision: Mapped[ReviewDecision | None] = relationship(
+        back_populates="report_version", cascade="all, delete-orphan"
+    )
+
+
+class ReportEvidenceLink(Base):
+    __tablename__ = "report_evidence_links"
+    __table_args__ = (
+        UniqueConstraint(
+            "report_version_id",
+            "section_type",
+            "section_id",
+            "response_result_id",
+            name="uq_report_evidence_link",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    report_version_id: Mapped[str] = mapped_column(ForeignKey("report_versions.id"), index=True)
+    section_type: Mapped[str] = mapped_column(String(32))
+    section_id: Mapped[str] = mapped_column(String(64))
+    response_result_id: Mapped[int] = mapped_column(
+        ForeignKey("response_classification_results.id"), index=True
+    )
+
+    report_version: Mapped[ReportVersion] = relationship(back_populates="evidence_links")
+    response_result: Mapped[ResponseClassificationRecord] = relationship(
+        back_populates="report_evidence_links"
+    )
+
+
+class ReviewDecision(Base):
+    __tablename__ = "review_decisions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    report_version_id: Mapped[str] = mapped_column(
+        ForeignKey("report_versions.id"), unique=True, index=True
+    )
+    decision: Mapped[str] = mapped_column(String(16))
+    reviewer: Mapped[str] = mapped_column(String(128))
+    comment: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+    report_version: Mapped[ReportVersion] = relationship(back_populates="decision")
 
 
 class ImportIssue(Base):

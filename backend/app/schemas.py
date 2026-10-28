@@ -112,3 +112,89 @@ class ErrorDetail(BaseModel):
 class ErrorResponse(BaseModel):
     error: ErrorDetail
 
+
+class ReportDiagnostic(BaseModel):
+    id: str = Field(min_length=1)
+    title: str = Field(min_length=1)
+    observed_pattern: str = Field(min_length=1)
+    possible_explanation: str = Field(min_length=1)
+    evidence_needed: str = Field(min_length=1)
+    uncertainty: Literal["low", "medium", "high"]
+    evidence_response_ids: list[str] = Field(min_length=1)
+
+
+class ReportRemedy(BaseModel):
+    id: str = Field(min_length=1)
+    priority: int = Field(ge=1, le=3)
+    title: str = Field(min_length=1)
+    evidence_response_ids: list[str] = Field(min_length=1)
+    action: str = Field(min_length=1)
+    expected_benefit: str = Field(min_length=1)
+    effort: Literal["low", "medium", "high"]
+    uncertainty: Literal["low", "medium", "high"]
+    validation_step: str = Field(min_length=1)
+
+
+class ReportContent(BaseModel):
+    analysis_id: str
+    summary: dict[str, Any]
+    diagnostics: list[ReportDiagnostic] = Field(min_length=3, max_length=3)
+    remedies: list[ReportRemedy] = Field(min_length=3, max_length=3)
+
+
+class ReportCreateRequest(BaseModel):
+    analysis_id: str
+
+
+class ReportPatchRequest(BaseModel):
+    content: ReportContent
+
+
+class ReportSubmitRequest(BaseModel):
+    version_id: str
+
+
+class ReportDecisionRequest(BaseModel):
+    version_id: str
+    decision: Literal["approved", "rejected"]
+    comment: str | None = None
+
+
+class ReviewDecisionView(BaseModel):
+    decision: Literal["approved", "rejected"]
+    reviewer: str
+    comment: str | None
+    created_at: str
+
+
+class ReportVersionView(BaseModel):
+    version_id: str
+    version_number: int
+    status: Literal["draft", "submitted", "approved", "rejected"]
+    content_hash: str
+    content: ReportContent
+    created_by: str
+    created_at: str
+    submitted_by: str | None
+    submitted_at: str | None
+    decision: ReviewDecisionView | None
+
+
+class ReportView(BaseModel):
+    report_id: str
+    analysis_id: str
+    current_version_id: str
+    current_version: ReportVersionView
+    versions: list[ReportVersionView]
+
+
+class ReportExportView(BaseModel):
+    report_id: str
+    analysis_id: str
+    version_id: str
+    version_number: int
+    content_hash: str
+    approved_by: str
+    approved_at: str
+    content: ReportContent
+
