@@ -30,6 +30,73 @@ py -3 -m uvicorn backend.app.main:app --reload
 The default input pack is the project root. Override it with `KASPARRO_INPUT_PACK`. The default
 database is `backend/kasparro.db`; override it with `KASPARRO_DATABASE_URL`.
 
+Local Ollama defaults to a project-requested 16,384-token context. Override it with
+`KASPARRO_OLLAMA_CONTEXT_TOKENS`. The local 4B model is retained for reproducibility but has not passed
+the development reliability gate.
+
+The root `.env` file is loaded automatically by `backend/app/config.py` and is ignored by Git. Add the
+key to that local file:
+
+```powershell
+GROQ_API_KEY=<your local secret>
+KASPARRO_GROQ_MODEL=openai/gpt-oss-120b
+KASPARRO_ANALYST_TOKEN=<separate analyst bearer token>
+KASPARRO_REVIEWER_TOKEN=<separate reviewer bearer token>
+```
+
+Process-level environment variables override `.env`, allowing deployment configuration without file
+changes. The loader supports comments, `export KEY=VALUE`, and single- or double-quoted values; invalid
+entries stop startup with their line number. Do not add the key to source files, requests, screenshots,
+or development notes. Use `execution_mode = "hosted_groq"` in the analysis request. Without the key,
+the API returns 422 rather than silently falling back to another provider.
+
+## Frozen hosted evaluation
+
+Save and pass the four development cases before touching the held-out runner:
+
+```powershell
+py -3 tools\benchmark_development.py --provider groq > evaluation\groq-development-120b.json
+py -3 tools\freeze_hosted_evaluation.py
+```
+
+The freeze command requires four validated, passing development cases on the configured model. It
+records hashes for the development artifact, classifier source, label set, and held-out runner without
+recording the API key. It refuses to overwrite an existing freeze manifest.
+
+The final held-out artifacts now exist and are immutable. Do not run this command again or overwrite
+them. For a fresh project freeze only, the one-time command would be:
+
+```powershell
+py -3 tools\benchmark_held_out.py --confirm-frozen
+```
+
+The runner verifies all frozen hashes before sending a request, waits 30 seconds between cases to
+reduce token-per-minute failures, and refuses to overwrite existing held-out evidence. It writes
+`evaluation/groq-held-out-120b.json` and `evaluation/groq-held-out-120b.md`. A nonzero exit code is an
+evaluation result to document, not permission to tune against the held-out cases.
+
+The recorded held-out run validated 5/8 cases and passed 4/8 exactly. Recommendation recall was 0 for
+the one positive case, two cases exhausted retries on provider schema rejection, and one exhausted
+retries on local contract validation. Groq is therefore not accepted for the full run.
+
+## Full hosted-run readiness
+
+The API request is ready but has not been executed. A sequential 150-response run paced near the
+observed 8,000-token-per-minute limit would take at least about 75 minutes at 30 seconds between
+responses, and a practical estimate is 75–90 minutes plus any provider retry waits. The call sends all
+150 archived answer texts to Groq. Obtain explicit user approval for that external disclosure and cost
+before running it, even if a future provider passes the quality gate.
+
+```powershell
+$dataset = Invoke-RestMethod -Method Post http://127.0.0.1:8000/datasets
+$body = @{ dataset_id = $dataset.dataset_id; execution_mode = "hosted_groq" } | ConvertTo-Json
+Invoke-RestMethod -Method Post -ContentType "application/json" -Body $body http://127.0.0.1:8000/analyses
+```
+
+The current API runs sequentially in the request process, and the adapter honors provider rate-limit
+waits and bounded retries. The HTTP request may therefore remain open for a long time. A background
+worker is production hardening for Phase 6, not part of this local assignment workflow.
+
 ## Demonstration requests
 
 ```powershell
@@ -39,6 +106,21 @@ $dataset = Invoke-RestMethod -Method Post http://127.0.0.1:8000/datasets
 $body = @{ dataset_id = $dataset.dataset_id; execution_mode = "stub" } | ConvertTo-Json
 $analysis = Invoke-RestMethod -Method Post -ContentType "application/json" -Body $body http://127.0.0.1:8000/analyses
 Invoke-RestMethod "http://127.0.0.1:8000/analyses/$($analysis.analysis_id)"
+```
+
+Report lifecycle requests use separate bearer tokens. The example below uses the controlled stub and
+PowerShell variables; do not paste real tokens into tracked files or logs.
+
+```powershell
+$analystHeaders = @{ Authorization = "Bearer $env:KASPARRO_ANALYST_TOKEN" }
+$reviewerHeaders = @{ Authorization = "Bearer $env:KASPARRO_REVIEWER_TOKEN" }
+$reportBody = @{ analysis_id = $analysis.analysis_id } | ConvertTo-Json
+$report = Invoke-RestMethod -Method Post -Headers $analystHeaders -ContentType "application/json" -Body $reportBody http://127.0.0.1:8000/reports
+$submitBody = @{ version_id = $report.current_version_id } | ConvertTo-Json
+$submitted = Invoke-RestMethod -Method Post -Headers $analystHeaders -ContentType "application/json" -Body $submitBody "http://127.0.0.1:8000/reports/$($report.report_id)/submit"
+$decisionBody = @{ version_id = $submitted.current_version_id; decision = "approved"; comment = "Evidence reviewed." } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Headers $reviewerHeaders -ContentType "application/json" -Body $decisionBody "http://127.0.0.1:8000/reports/$($report.report_id)/decision"
+Invoke-RestMethod -Headers $analystHeaders "http://127.0.0.1:8000/reports/$($report.report_id)/export"
 ```
 
 Swagger UI is available at `http://127.0.0.1:8000/docs`.

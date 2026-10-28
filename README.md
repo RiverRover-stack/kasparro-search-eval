@@ -5,9 +5,15 @@ This project implements the local, evidence-linked workflow described in
 the repository root and are imported without rewriting their source records.
 
 Current implementation status: lossless/idempotent import, queryable provider provenance, bounded
-classification contracts, analysis persistence, controlled stub/replay execution, analysis APIs, and
-transparent aggregates are implemented. Full local-model evaluation, reports, review, and export remain
-in later phases.
+classification contracts, analysis persistence, controlled stub/replay execution, analysis APIs,
+transparent aggregates, and the evidence-linked report/review/export lifecycle are implemented.
+
+The local `gemma3:4b` feasibility adapter did not pass the frozen development reliability gate. A Groq
+strict-structured-output fallback passed development 4/4 but only validated 5/8 and passed 4/8 on the
+immutable held-out set. It is not accepted for the full run, which has not been executed.
+
+Local configuration is read automatically from the Git-ignored root `.env`; process environment
+variables take precedence. Leave `GROQ_API_KEY` blank until a real key is configured locally.
 
 ## Local verification
 

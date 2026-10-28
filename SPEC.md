@@ -55,6 +55,9 @@ through analyst and reviewer controls. Raw evidence and model outputs are never 
 | CLS-004 | `tests/test_classification.py::test_fabricated_excerpt_is_rejected` |
 | SCORE-001 | `tests/test_classification.py::test_visibility_score` |
 | SCORE-002 | `tests/test_analysis.py::test_stub_analysis_persists_terminal_results_and_aggregates` |
+| REPORT-001 | `tests/test_reports.py::test_report_lifecycle_authorization_immutability_and_versioned_export` |
+| REVIEW-001 | `tests/test_reports.py::test_report_lifecycle_authorization_immutability_and_versioned_export` |
+| REVIEW-002 | `tests/test_reports.py::test_report_lifecycle_authorization_immutability_and_versioned_export` |
 | API-001 | `tests/test_health.py::test_openapi_documents_dataset_import` |
 | API-002 | Request-ID middleware implemented; live HTTP verification recorded in dev notes |
 
@@ -62,7 +65,8 @@ Requirements not listed in the table remain planned rather than implemented.
 
 ## Implemented analysis API contract
 
-`POST /analyses` accepts a dataset ID and an execution mode of `stub`, `replay`, or `local_ollama`.
+`POST /analyses` accepts a dataset ID and an execution mode of `stub`, `replay`, `local_ollama`, or
+`hosted_groq`.
 The controlled stub is deterministic engineering evidence only. Replay accepts explicitly supplied,
 contract-valid classifications keyed by response ID; a missing replay item becomes a failed response,
 not absence. Local execution uses the bounded adapter. `GET /analyses/{id}` returns the persisted run,
@@ -73,4 +77,27 @@ Every eligible response is `successful`, `failed`, or `skipped` with a reason. O
 skipped before adapter invocation and are never truncated. Attempts store duration, execution mode,
 model identifier, prompt version, raw output, and validation failure. Runs left `running` across an
 application restart are marked `interrupted` during startup.
+
+`hosted_groq` is also implemented behind the same boundary. It requires `GROQ_API_KEY`, uses the
+configured model, and requests strict JSON Schema output. The API key is environment-only. Both
+local and hosted attempts persist provider diagnostics without credentials. Local Ollama explicitly
+uses a configurable 16,384-token context; development evidence shows this fixes truncation but does
+not make `gemma3:4b` semantically reliable. Frozen hosted development passed 4/4, but the immutable
+held-out result validated only 5/8 cases and passed 4/8 exactly. Groq is therefore not accepted for
+the full run; no production call has been made.
+
+## Implemented report and review API contract
+
+`POST /reports` creates one deterministic draft for a completed analysis. The report stores the
+analysis identifiers, score/coverage summary, exactly three diagnostics, and exactly three remedies.
+Every diagnostic and remedy links to persisted response-result evidence. Possible explanations are
+explicit hypotheses and are not presented as verified causes.
+
+Every `PATCH /reports/{id}` creates a new immutable draft version. `POST /reports/{id}/submit`
+freezes the current draft, and `POST /reports/{id}/decision` allows only the configured reviewer role
+to approve or reject that exact submitted version. `GET /reports/{id}/export` defaults to the current
+version and refuses anything not approved; `version_id` may explicitly select an older approved
+version. Analyst and reviewer identities come from separate environment-provided bearer tokens.
+Report content, evidence links, decisions, comments, actors, timestamps, hashes, and audit events are
+persisted. Credentials are never stored in those records or exports.
 

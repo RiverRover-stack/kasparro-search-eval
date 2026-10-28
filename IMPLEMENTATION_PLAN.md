@@ -1,7 +1,7 @@
 # Kasparro Visibility Backend: Specification and Implementation Plan
 
-Status: Implementation in progress; Phases 0 and 1 completed, Phase 2 operational through
-controlled stub and replay execution on 28 October 2026.
+Status: Implementation in progress; Phases 0, 1, and 3 completed. Phase 2 engineering is complete,
+but no provider passed the reliability evidence needed for the full 150-response run.
 Saved: 28 October 2026. All schedule times below are IST.
 The schedule records the agreed targets; elapsed windows do not imply completed work.
 
@@ -13,7 +13,7 @@ Current verified progress:
   preservation, relationship validation, partial rejection, and idempotent import are implemented.
 - Classification contract version 1, exact-excerpt verification, deterministic literal-mention
   checking, bounded Ollama execution, and the 0/25/100 score function are implemented.
-- Twenty-six automated tests pass. A live Uvicorn check returned HTTP 200, documented both implemented
+- Fifty automated tests pass. A live Uvicorn check returned HTTP 200, documented both implemented
   paths, imported the complete pack with no rejections, and safely reused the repeated import.
 - A median-length `gemma3:4b` sample initially failed traceability and mention checks. After the
   deterministic guard/prompt fix, the same sample validated on attempt 2. A full local-model run,
@@ -135,9 +135,20 @@ Current phase status:
   benchmark failed strict output validation and is not a quality result.
 - **Phase 1 — complete:** full import, provider-provenance linkage, partial rejection, duplicate and
   conflict behavior, repeat-import row counts, and relationship checks have automated coverage.
-- **Phase 2 — in progress:** persistence, controlled stub/replay execution, APIs, terminal accounting,
-  and aggregates are implemented and tested. A full local-model run and model evaluation are not done.
-- **Phases 3 and 4 — not started. Phase 5 — documentation partially updated. Phase 6 — not started.**
+- **Phase 2 — engineering complete; live full run blocked by quality evidence:** persistence,
+  controlled stub/replay execution, APIs, terminal accounting, aggregates, explicit Ollama context
+  control, provider diagnostics, and the Groq fallback adapter are implemented and tested. Local
+  `gemma3:4b` failed the development reliability gate. Hosted `openai/gpt-oss-120b` with prompt v6
+  passed all four development cases and is frozen by hashes. Its immutable held-out run validated
+  5/8 cases and passed 4/8 exactly, including zero recall on the one positive recommendation case.
+  This does not support accepting Groq for the full run. The request remains unexecuted and requires
+  explicit approval even for a diagnostic run.
+- **Phase 3 — complete:** deterministic report creation, evidence-linked immutable drafts,
+  exact-version submission and decisions, reviewer authorization, rejection handling, and
+  version-specific approved export are implemented and tested.
+- **Phase 4 — in progress:** the frozen held-out evaluation is complete and documented; broader
+  integration/evaluation artifacts remain. **Phase 5 — documentation partially updated. Phase 6 —
+  not started.**
 
 These are elapsed scheduling windows, not a requirement for uninterrupted human work. Log actual active effort separately. Protect the 1 p.m. checkpoint by dropping optional additions before reducing required tests or evaluation.
 
@@ -160,4 +171,4 @@ Required automated scenarios:
 - Known scoring examples and aggregation denominators.
 - A complete import-to-approved-export integration test.
 
-Completion requires a full local-model run accounting for all 150 responses, honest reporting of failures, three traceable diagnostics and remedies, passing required engineering tests, saved evaluation results, verified onboarding, and documented unresolved limitations. No numerical model-quality threshold is invented; observed performance and concrete failures determine the claims made in the submission.
+Completion requires a full accepted-provider run accounting for all 150 responses, honest reporting of failures, three traceable diagnostics and remedies, passing required engineering tests, saved evaluation results, verified onboarding, and documented unresolved limitations. The accepted provider may be local or hosted but must first pass the frozen evaluation gates. No numerical model-quality threshold is invented; observed performance and concrete failures determine the claims made in the submission.
