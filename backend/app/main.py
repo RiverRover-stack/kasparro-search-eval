@@ -12,6 +12,7 @@ from .analysis import AnalysisBusyError, AnalysisNotFoundError, execute_analysis
 from .classification import (
     ClassificationResult,
     ControlledStubClassifier,
+    GroqClassifier,
     OllamaClassifier,
     ReplayClassifier,
 )
@@ -120,8 +121,20 @@ def create_analysis(
             for response_id, result in payload.replay_results.items()
         }
         classifier = ReplayClassifier(replay_results)
+    elif payload.execution_mode == "local_ollama":
+        classifier = OllamaClassifier(
+            max_input_chars=settings.max_input_chars,
+            context_tokens=settings.ollama_context_tokens,
+        )
     else:
-        classifier = OllamaClassifier(max_input_chars=settings.max_input_chars)
+        try:
+            classifier = GroqClassifier(
+                api_key=settings.groq_api_key,
+                model=settings.groq_model,
+                max_input_chars=settings.max_input_chars,
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
     try:
         return execute_analysis(
             session,

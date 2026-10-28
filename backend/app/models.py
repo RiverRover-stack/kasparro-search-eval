@@ -128,6 +128,7 @@ class ModelAttemptRecord(Base):
     prompt_version: Mapped[str] = mapped_column(String(64))
     raw_output: Mapped[str | None] = mapped_column(Text, nullable=True)
     validation_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    provider_metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=dict)
 
     analysis_run: Mapped[AnalysisRun] = relationship(back_populates="attempts")
 

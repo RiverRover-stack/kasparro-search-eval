@@ -109,6 +109,7 @@ def execute_analysis(
                         prompt_version=classifier.prompt_version,
                         raw_output=None,
                         validation_error=failure_reason,
+                        provider_metadata={},
                     )
                 )
             else:
@@ -127,6 +128,7 @@ def execute_analysis(
                             prompt_version=outcome.prompt_version,
                             raw_output=attempt.raw_output,
                             validation_error=attempt.validation_error,
+                            provider_metadata=attempt.provider_metadata,
                         )
                     )
                 if outcome.result is None:

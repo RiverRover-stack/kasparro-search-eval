@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import pytest
+from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, sessionmaker
 
 from backend.app.analysis import execute_analysis, get_analysis
-from backend.app.classification import ControlledStubClassifier
+from backend.app.classification import ClassificationOutcome, ControlledStubClassifier, ModelAttempt
 from backend.app.importer import import_pack
 from backend.app.models import ModelAttemptRecord, ResponseClassificationRecord
 from backend.app.main import create_analysis, read_analysis
@@ -31,6 +33,10 @@ def test_stub_analysis_persists_terminal_results_and_aggregates(
         assert fetched.aggregate.skipped == 0
         assert fetched.shared_prompt_comparison.shared_successful_prompts == 50
         assert session.scalar(select(func.count()).select_from(ModelAttemptRecord)) == 150
+        assert all(
+            metadata == {}
+            for metadata in session.scalars(select(ModelAttemptRecord.provider_metadata))
+        )
         assert session.scalar(select(func.count()).select_from(ResponseClassificationRecord)) == 150
 
 
@@ -106,3 +112,80 @@ def test_replay_endpoint_records_missing_replay_items_as_failures(
     assert analysis.aggregate.successful == 1
     assert analysis.aggregate.failed == 149
     assert next(item for item in analysis.results if item.response_id == response_id).status == "successful"
+
+
+def test_hosted_endpoint_requires_configured_key(
+    session_factory: sessionmaker[Session], monkeypatch
+) -> None:
+    monkeypatch.setattr(
+        "backend.app.config.ENV_FILE", ROOT / "missing-test-environment-file"
+    )
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    with session_factory() as session:
+        dataset = import_pack(session, ROOT)
+        with pytest.raises(HTTPException) as caught:
+            create_analysis(
+                AnalysisCreateRequest(
+                    dataset_id=dataset.dataset_id,
+                    execution_mode="hosted_groq",
+                ),
+                session,
+            )
+
+    assert caught.value.status_code == 422
+    assert "GROQ_API_KEY" in str(caught.value.detail)
+
+
+def test_hosted_endpoint_uses_hosted_mode_and_persists_provider_metadata(
+    session_factory: sessionmaker[Session], monkeypatch
+) -> None:
+    class HostedTestClassifier(ControlledStubClassifier):
+        execution_mode = "hosted_groq"
+        model_identifier = "hosted-test-model"
+        prompt_version = "visibility-classifier-v6"
+
+        def classify(self, answer_text: str, response_id: str | None = None):
+            outcome = super().classify(answer_text, response_id)
+            attempt = outcome.attempts[0]
+            return ClassificationOutcome(
+                result=outcome.result,
+                attempts=[
+                    ModelAttempt(
+                        attempt.attempt_number,
+                        attempt.duration_ms,
+                        attempt.raw_output,
+                        attempt.validation_error,
+                        {"finish_reason": "stop", "prompt_tokens": 1},
+                    )
+                ],
+                model_identifier=self.model_identifier,
+                prompt_version=self.prompt_version,
+                execution_mode=self.execution_mode,
+            )
+
+    class TestSettings:
+        max_input_chars = 20_000
+        groq_api_key = "configured-test-credential"
+        groq_model = "hosted-test-model"
+
+    monkeypatch.setattr("backend.app.main.Settings.from_environment", lambda: TestSettings())
+    monkeypatch.setattr(
+        "backend.app.main.GroqClassifier", lambda **_kwargs: HostedTestClassifier()
+    )
+    with session_factory() as session:
+        dataset = import_pack(session, ROOT)
+        analysis = create_analysis(
+            AnalysisCreateRequest(
+                dataset_id=dataset.dataset_id,
+                execution_mode="hosted_groq",
+            ),
+            session,
+        )
+        metadata = list(session.scalars(select(ModelAttemptRecord.provider_metadata)))
+
+    assert analysis.execution_mode == "hosted_groq"
+    assert analysis.model_identifier == "hosted-test-model"
+    assert analysis.prompt_version == "visibility-classifier-v6"
+    assert analysis.aggregate.eligible == 150
+    assert analysis.aggregate.successful == 150
+    assert all(item == {"finish_reason": "stop", "prompt_tokens": 1} for item in metadata)

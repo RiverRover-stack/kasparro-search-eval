@@ -56,7 +56,7 @@ class DatasetImportResponse(BaseModel):
 
 class AnalysisCreateRequest(BaseModel):
     dataset_id: str
-    execution_mode: Literal["stub", "replay", "local_ollama"] = "stub"
+    execution_mode: Literal["stub", "replay", "local_ollama", "hosted_groq"] = "stub"
     replay_results: dict[str, dict[str, Any]] = Field(default_factory=dict)
 
 
