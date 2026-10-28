@@ -1,0 +1,234 @@
+{
+  "label_set_version": "visibility-evaluation-v1",
+  "classification_contract_version": "classification-v1",
+  "frozen_at": "2026-10-28",
+  "policy": {
+    "development_cases": 4,
+    "held_out_cases": 8,
+    "held_out_tuning_allowed": false,
+    "note": "Held-out cases are final-check evidence and must not be used to alter the classifier prompt. Exact excerpts establish traceability, not semantic correctness."
+  },
+  "supplied_cases": [
+    {
+      "response_id": "a3fdd8bb-bcd9-4608-9786-ad4b3a2c7dc2",
+      "engine": "aimode",
+      "prompt_id": "kasparro:ai_shortlisting:001",
+      "split": "development",
+      "rationale": "Branded prompt with a literal mention and an explicit adverse characterization, but no recommendation.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "observable_position": null,
+        "supporting_excerpts": [
+          "Kasparro is not a widely recognized, top-tier agency or tool in the AI visibility space"
+        ]
+      }
+    },
+    {
+      "response_id": "b9f436b9-af39-486a-bbbe-d4692e55d6fb",
+      "engine": "aimode",
+      "prompt_id": "kasparro:ai_shortlisting:036",
+      "split": "development",
+      "rationale": "Unbranded discovery prompt whose answer recommends several competitors but never mentions Kasparro.",
+      "expected": {
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null,
+        "supporting_excerpts": []
+      }
+    },
+    {
+      "response_id": "ac5bdf24-6a6e-49a0-abf5-2755ff3b42bc",
+      "engine": "chatgpt",
+      "prompt_id": "kasparro:ai_shortlisting:001",
+      "split": "development",
+      "rationale": "Branded prompt with a cautious mention and explicit lack-of-evidence criticism rather than endorsement.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "observable_position": null,
+        "supporting_excerpts": [
+          "Kasparro positions itself as an \"AI Revenue Engine\" that helps brands become more visible in AI assistants like ChatGPT.",
+          "However, I couldn't find independent evidence showing that Kasparro consistently delivers measurable improvements for B2B SaaS companies specifically."
+        ]
+      }
+    },
+    {
+      "response_id": "729e6864-9290-4336-a32e-b9a27ce150a6",
+      "engine": "gemini",
+      "prompt_id": "kasparro:ai_shortlisting:013",
+      "split": "development",
+      "rationale": "Conditional recommendation overlaps with an explicit limitation; there is no single overall rank.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": null,
+        "supporting_excerpts": [
+          "Choose **Kasparro** if you prefer a **hands-on, boutique approach** where tracking is directly tied to active implementation and human engineering support rather than purely self-serve software dashboards.",
+          "As a smaller, high-velocity boutique player, it lacks the massive Silicon Valley institutional backing (like YC) that AthenaHQ boasts, meaning public reviews and third-party validation are scarcer."
+        ]
+      }
+    },
+    {
+      "response_id": "67b714d5-bf90-42c2-a360-1d1d3149c1f8",
+      "engine": "aimode",
+      "prompt_id": "kasparro:ai_shortlisting:004",
+      "split": "held_out",
+      "rationale": "Literal mention in troubleshooting advice without a direct recommendation or brand criticism.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null,
+        "supporting_excerpts": [
+          "If Kasparro or any similar AI visibility service does not show improvements within 14 days"
+        ]
+      }
+    },
+    {
+      "response_id": "35b7cd2b-eef2-4767-84a7-c9e6aff8fcf5",
+      "engine": "aimode",
+      "prompt_id": "kasparro:ai_shortlisting:013",
+      "split": "held_out",
+      "rationale": "Comparison explicitly favors a competitor and negatively characterizes Kasparro's visibility without a numbered rank.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "observable_position": null,
+        "supporting_excerpts": [
+          "There is no data available for a competitor named \"Kasparro,\" suggesting AthenaHQ is the more established or visible entity in this specialized market segment."
+        ]
+      }
+    },
+    {
+      "response_id": "08f81acc-0824-4e3a-a5d5-58446e2a6a90",
+      "engine": "chatgpt",
+      "prompt_id": "kasparro:ai_shortlisting:005",
+      "split": "held_out",
+      "rationale": "Mixed assessment recognizes a legitimate problem while questioning unverified Kasparro claims.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "observable_position": null,
+        "supporting_excerpts": [
+          "Kasparro appears to be tackling a legitimate problem.",
+          "What I **can't independently verify** are claims such as:"
+        ]
+      }
+    },
+    {
+      "response_id": "c3b978b0-d181-4941-8d88-241cab857499",
+      "engine": "chatgpt",
+      "prompt_id": "kasparro:ai_shortlisting:017",
+      "split": "held_out",
+      "rationale": "A conditional recommendation and criticism overlap, and an explicit ordered list places Kasparro third.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": 3,
+        "supporting_excerpts": [
+          "Kasparro makes more sense if you want:",
+          "3. Kasparro ⭐⭐⭐⭐☆ (good, but harder to justify unless you need its specific workflow features)"
+        ]
+      }
+    },
+    {
+      "response_id": "34f5321e-242b-495c-9c68-98f3b297dcb1",
+      "engine": "chatgpt",
+      "prompt_id": "kasparro:ai_shortlisting:046",
+      "split": "held_out",
+      "rationale": "Unbranded build-versus-buy answer with no Kasparro occurrence.",
+      "expected": {
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null,
+        "supporting_excerpts": []
+      }
+    },
+    {
+      "response_id": "6b68f8f8-5ecd-466c-9664-801227a9167c",
+      "engine": "gemini",
+      "prompt_id": "kasparro:ai_shortlisting:008",
+      "split": "held_out",
+      "rationale": "A refusal contains a literal mention but neither recommendation nor a substantive negative product characterization.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null,
+        "supporting_excerpts": [
+          "I am unable to provide comparisons or information regarding Kasparro's audit system or Otterly AI's features."
+        ]
+      }
+    },
+    {
+      "response_id": "5beb2a32-6c6c-42d8-861c-9fc9680b9930",
+      "engine": "gemini",
+      "prompt_id": "kasparro:ai_shortlisting:014",
+      "split": "held_out",
+      "rationale": "Branded question is answered about the similarly named Kaspr; question text must not be counted as answer evidence.",
+      "expected": {
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null,
+        "supporting_excerpts": []
+      }
+    },
+    {
+      "response_id": "0f38b477-9f3c-44a8-9d10-0b6016db6150",
+      "engine": "gemini",
+      "prompt_id": "kasparro:ai_shortlisting:036",
+      "split": "held_out",
+      "rationale": "Maximum-length supplied answer recommends several alternatives but never mentions Kasparro.",
+      "expected": {
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null,
+        "supporting_excerpts": []
+      }
+    }
+  ],
+  "synthetic_cases": [
+    {
+      "case_id": "synthetic-overlap-v1",
+      "source_type": "synthetic",
+      "answer_text": "Kasparro is my first recommendation for audit depth, although Kasparro is expensive and difficult to configure.",
+      "purpose": "Recommendation and negative characterization overlap.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": 1,
+        "supporting_excerpts": [
+          "Kasparro is my first recommendation for audit depth",
+          "Kasparro is expensive and difficult to configure"
+        ]
+      }
+    },
+    {
+      "case_id": "synthetic-ambiguous-position-v1",
+      "source_type": "synthetic",
+      "answer_text": "Consider Kasparro alongside Profound and Peec; this sentence is not an ordered ranking.",
+      "purpose": "Mentioned option with intentionally ambiguous position.",
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": false,
+        "observable_position": null,
+        "supporting_excerpts": [
+          "Consider Kasparro alongside Profound and Peec"
+        ]
+      }
+    }
+  ]
+}

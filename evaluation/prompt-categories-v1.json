@@ -1,0 +1,17 @@
+{
+  "mapping_version": "prompt-categories-v1",
+  "frozen_at": "2026-10-28",
+  "rules": [
+    {"prompt_numbers": "001-005", "category": "brand_efficacy", "branded": true},
+    {"prompt_numbers": "006-010", "category": "brand_capabilities", "branded": true},
+    {"prompt_numbers": "011-015", "category": "brand_trust_and_risk", "branded": true},
+    {"prompt_numbers": "016-019", "category": "brand_price_and_value", "branded": true},
+    {"prompt_numbers": "020-025", "category": "brand_onboarding_and_access", "branded": true},
+    {"prompt_numbers": "026-030", "category": "branded_category_education", "branded": true},
+    {"prompt_numbers": "031-035", "category": "unbranded_optimization", "branded": false},
+    {"prompt_numbers": "036-040", "category": "unbranded_vendor_discovery", "branded": false},
+    {"prompt_numbers": "041-044", "category": "unbranded_capabilities", "branded": false},
+    {"prompt_numbers": "045-050", "category": "unbranded_commercial_and_onboarding", "branded": false}
+  ],
+  "note": "The branded flag describes the supplied prompt text only. It never substitutes for literal mention evidence in an archived answer."
+}
