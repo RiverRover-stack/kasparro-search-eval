@@ -1,0 +1,10 @@
+/Assignment.docx -text
+/Assignment.pdf -text
+/PACK_MANIFEST.json -text
+/START_HERE.txt -text
+/data/** -text
+/fixtures/** -text
+/provenance/** -text
+/reference/** -text
+/schemas/** -text
+/tools/check_pack.py -text
