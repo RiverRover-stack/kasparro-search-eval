@@ -1,0 +1,19 @@
+{
+  "freeze_version": "hosted-evaluation-freeze-v1",
+  "frozen_at_utc": "2026-10-28T22:10:38.034436+00:00",
+  "provider": "groq",
+  "model_identifier": "openai/gpt-oss-120b",
+  "prompt_version": "visibility-classifier-v6",
+  "classification_contract_version": "classification-v1",
+  "generation_settings": {
+    "temperature": 0,
+    "seed": 17,
+    "reasoning_effort": "low",
+    "max_completion_tokens": 2048
+  },
+  "development_result": "evaluation/groq-development-120b.json",
+  "development_result_sha256": "061bce6a5a0b37bb8b27bbdf3742538674962a8d5af3f2440c4d62c6a803d519",
+  "classifier_source_sha256": "3ae9c5504cb2c17c263c98449e09f9ecc5a6e1b01527398aa3fe94819c66d941",
+  "labels_sha256": "f1e7f91172fe4686f2f4c46f8c3d0241187258a4a81fa3bf2e939d570eea2f81",
+  "held_out_runner_sha256": "0cc69653078a2e4c7c1478a36d891a63b5215d827197baea71a4f93237e20736"
+}

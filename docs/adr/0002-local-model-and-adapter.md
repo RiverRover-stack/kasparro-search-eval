@@ -9,3 +9,8 @@ quoted excerpts occur in the archived answer. Replay and controlled stub impleme
 the same `ClassificationResult` boundary. A hosted adapter is optional and must not change the
 contract or consume unapproved credentials.
 
+Amendment, 29 October 2026: set `num_ctx=16384` explicitly and record prompt/output token counts,
+finish reasons, and evidence normalization metadata. This fixed the observed context truncation, but
+`gemma3:4b` still failed the development semantic/evidence gate. It remains a feasibility adapter, not
+the accepted production classifier. See ADR 0004 for the hosted fallback.
+

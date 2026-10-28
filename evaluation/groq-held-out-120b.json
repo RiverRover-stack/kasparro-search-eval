@@ -1,0 +1,444 @@
+{
+  "split": "held_out",
+  "provider": "groq",
+  "model_identifier": "openai/gpt-oss-120b",
+  "prompt_version": "visibility-classifier-v6",
+  "classification_contract_version": "classification-v1",
+  "freeze_manifest": "evaluation/frozen-hosted-config-v1.json",
+  "summary": {
+    "total_cases": 8,
+    "validated_cases": 5,
+    "validation_coverage": 0.625,
+    "passed_cases": 4,
+    "exact_case_pass_rate": 0.5,
+    "per_label": {
+      "brand_mentioned": {
+        "tp": 3,
+        "tn": 2,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "agreement": 0.625
+      },
+      "recommended": {
+        "tp": 0,
+        "tn": 4,
+        "fp": 0,
+        "fn": 1,
+        "precision": null,
+        "recall": 0.0,
+        "agreement": 0.5
+      },
+      "negative_characterization": {
+        "tp": 2,
+        "tn": 3,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "agreement": 0.625
+      },
+      "observable_position": {
+        "matches": 5,
+        "agreement": 0.625
+      }
+    }
+  },
+  "cases": [
+    {
+      "response_id": "67b714d5-bf90-42c2-a360-1d1d3149c1f8",
+      "engine": "aimode",
+      "input_chars": 6315,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": false,
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null
+      },
+      "result": null,
+      "label_agreement": null,
+      "passed": false,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 1275,
+          "raw_output": null,
+          "validation_error": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'If Kasparro or any similar AI visibility service does not show improvements within 14 days, it is likely due to the nature of AI search, which prioritizes established authority and third-party validation over immediate technical changes.[](https://higoodie.com/blog/how-long-does-aeo-take/) [[1]](https://higoodie.com/blog/how-long-does-aeo-take/)[[2]](https://www.data-mania.com/blog/ai-search-ranking-optimization-steps/)[[3]](https://www.instagram.com/reel/DbBpIaKAtrS/)', 'Here is what you should do if you do not see improvements:', '- **Timeframe is too short:** Real AI optimization (AEO) typically takes 8-12 weeks for consistent citation patterns to appear and 3-6 months for measurable business impact.[](https://h",
+          "provider_metadata": {
+            "http_status": 400,
+            "provider_error": {
+              "type": "invalid_request_error",
+              "code": "json_validate_failed",
+              "message": "Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'If Kasparro or any similar AI visibility service does not show improvements within 14 days, it is likely due to the nature of AI search, which prioritizes established authority and third-party validation over immediate technical changes.[](https://higoodie.com/blog/how-long-does-aeo-take/) [[1]](https://higoodie.com/blog/how-long-does-aeo-take/)[[2]](https://www.data-mania.com/blog/ai-search-ranking-optimization-steps/)[[3]](https://www.instagram.com/reel/DbBpIaKAtrS/)', 'Here is what you should do if you do not see improvements:', '- **Timeframe is too short:** Real AI optimization (AEO) typically takes 8-12 weeks for consistent citation patterns to appear and 3-6 months for measurable business impact.[](https://h"
+            }
+          }
+        },
+        {
+          "attempt_number": 2,
+          "duration_ms": 1508,
+          "raw_output": null,
+          "validation_error": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'If Kasparro or any similar AI visibility service does not show improvements within 14 days, it is likely due to the nature of AI search, which prioritizes established authority and third-party validation over immediate technical changes.[](https://higoodie.com/blog/how-long-does-aeo-take/) [[1]](https://higoodie.com/blog/how-long-does-aeo-take/)[[2]](https://www.data-mania.com/blog/ai-search-ranking-optimization-steps/)[[3]](https://www.instagram.com/reel/DbBpIaKAtrS/)', 'Here is what you should do if you do not see improvements:', '- **Timeframe is too short:** Real AI optimization (AEO) typically takes 8-12 weeks for consistent citation patterns to appear and 3-6 months for measurable business impact.[](https://h",
+          "provider_metadata": {
+            "http_status": 400,
+            "provider_error": {
+              "type": "invalid_request_error",
+              "code": "json_validate_failed",
+              "message": "Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'If Kasparro or any similar AI visibility service does not show improvements within 14 days, it is likely due to the nature of AI search, which prioritizes established authority and third-party validation over immediate technical changes.[](https://higoodie.com/blog/how-long-does-aeo-take/) [[1]](https://higoodie.com/blog/how-long-does-aeo-take/)[[2]](https://www.data-mania.com/blog/ai-search-ranking-optimization-steps/)[[3]](https://www.instagram.com/reel/DbBpIaKAtrS/)', 'Here is what you should do if you do not see improvements:', '- **Timeframe is too short:** Real AI optimization (AEO) typically takes 8-12 weeks for consistent citation patterns to appear and 3-6 months for measurable business impact.[](https://h"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "response_id": "35b7cd2b-eef2-4767-84a7-c9e6aff8fcf5",
+      "engine": "aimode",
+      "input_chars": 3720,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": true,
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "observable_position": null
+      },
+      "result": {
+        "contract_version": "classification-v1",
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "competitors": [
+          "Dageno AI",
+          "Analyze AI"
+        ],
+        "observable_position": null,
+        "supporting_excerpts": [
+          {
+            "kind": "mention",
+            "quote": "There is no data available for a competitor named \"Kasparro,\" suggesting AthenaHQ is the more established or visible entity in this specialized market segment."
+          },
+          {
+            "kind": "negative_characterization",
+            "quote": "There is no data available for a competitor named \"Kasparro,\" suggesting AthenaHQ is the more established or visible entity in this specialized market segment."
+          }
+        ],
+        "uncertainty": "low",
+        "uncertainty_reason": "The answer explicitly mentions Kasparro and provides a clear negative characterization without any ambiguity."
+      },
+      "label_agreement": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": true
+      },
+      "passed": true,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 1174,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": true,\n  \"recommended\": false,\n  \"negative_characterization\": true,\n  \"observable_position\": null,\n  \"competitors\": [\n    \"Dageno AI\",\n    \"Analyze AI\"\n  ],\n  \"supporting_excerpts\": [\n    {\n      \"kind\": \"mention\",\n      \"quote\": \"There is no data available for a competitor named \\\"Kasparro,\\\" suggesting AthenaHQ is the more established or visible entity in this specialized market segment.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"There is no data available for a competitor named \\\"Kasparro,\\\" suggesting AthenaHQ is the more established or visible entity in this specialized market segment.\"\n    }\n  ],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The answer explicitly mentions Kasparro and provides a clear negative characterization without any ambiguity.\"\n}",
+          "validation_error": null,
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 2064,
+            "completion_tokens": 455,
+            "dropped_inactive_excerpts": 0
+          }
+        }
+      ]
+    },
+    {
+      "response_id": "08f81acc-0824-4e3a-a5d5-58446e2a6a90",
+      "engine": "chatgpt",
+      "input_chars": 4769,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": false,
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "observable_position": null
+      },
+      "result": null,
+      "label_agreement": null,
+      "passed": false,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 1412,
+          "raw_output": null,
+          "validation_error": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Short answer: **AI visibility tracking is a real problem, but many tools oversell how precisely they can measure it.** Kasparro falls into a category of tools trying to solve a legitimate need, but I\\'d be skeptical of taking any single \"AI visibility score\" at face value.', 'Here\\'s how I\\'d break it down.', 'That means two tools can honestly report completely different scores for the same company because they\\'re measuring different things. Even people actively testing these platforms have reported wildly inconsistent results across vendors. [www.reddit.com](https://www.reddit.com/r/GEO_optimization/comments/1umrd01/i_tried_at_least_20_ai_visibility_tools_for_my/?utm_source=chatgpt.com)', 'That means two tools ca",
+          "provider_metadata": {
+            "http_status": 400,
+            "provider_error": {
+              "type": "invalid_request_error",
+              "code": "json_validate_failed",
+              "message": "Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Short answer: **AI visibility tracking is a real problem, but many tools oversell how precisely they can measure it.** Kasparro falls into a category of tools trying to solve a legitimate need, but I\\'d be skeptical of taking any single \"AI visibility score\" at face value.', 'Here\\'s how I\\'d break it down.', 'That means two tools can honestly report completely different scores for the same company because they\\'re measuring different things. Even people actively testing these platforms have reported wildly inconsistent results across vendors. [www.reddit.com](https://www.reddit.com/r/GEO_optimization/comments/1umrd01/i_tried_at_least_20_ai_visibility_tools_for_my/?utm_source=chatgpt.com)', 'That means two tools ca"
+            }
+          }
+        },
+        {
+          "attempt_number": 2,
+          "duration_ms": 1153,
+          "raw_output": null,
+          "validation_error": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/1/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Short answer: **AI visibility tracking is a real problem, but many tools oversell how precisely they can measure it.** Kasparro falls into a category of tools trying to solve a legitimate need, but I\\'d be skeptical of taking any single \"AI visibility score\" at face value.', 'Here\\'s how I\\'d break it down.', 'That means two tools can honestly report completely different scores for the same company because they\\'re measuring different things. Even people actively testing these platforms have reported wildly inconsistent results across vendors. [www.reddit.com](https://www.reddit.com/r/GEO_optimization/comments/1umrd01/i_tried_at_least_20_ai_visibility_tools_for_my/?utm_source=chatgpt.com)', 'That means two tools ca",
+          "provider_metadata": {
+            "http_status": 400,
+            "provider_error": {
+              "type": "invalid_request_error",
+              "code": "json_validate_failed",
+              "message": "Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/1/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Short answer: **AI visibility tracking is a real problem, but many tools oversell how precisely they can measure it.** Kasparro falls into a category of tools trying to solve a legitimate need, but I\\'d be skeptical of taking any single \"AI visibility score\" at face value.', 'Here\\'s how I\\'d break it down.', 'That means two tools can honestly report completely different scores for the same company because they\\'re measuring different things. Even people actively testing these platforms have reported wildly inconsistent results across vendors. [www.reddit.com](https://www.reddit.com/r/GEO_optimization/comments/1umrd01/i_tried_at_least_20_ai_visibility_tools_for_my/?utm_source=chatgpt.com)', 'That means two tools ca"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "response_id": "c3b978b0-d181-4941-8d88-241cab857499",
+      "engine": "chatgpt",
+      "input_chars": 3685,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": true,
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": 3
+      },
+      "result": {
+        "contract_version": "classification-v1",
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "competitors": [
+          "Peec AI",
+          "Profound"
+        ],
+        "observable_position": 3,
+        "supporting_excerpts": [
+          {
+            "kind": "mention",
+            "quote": "Assuming you mean **Kasparro** (the AI visibility/GEO platform, not Kaspr for sales prospecting), my answer is:"
+          },
+          {
+            "kind": "negative_characterization",
+            "quote": "If you're expecting it to dramatically outperform Peec on tracking accuracy alone, I don't think the premium is justified based on what's publicly available."
+          },
+          {
+            "kind": "negative_characterization",
+            "quote": "Kasparro ⭐⭐⭐⭐☆ (good, but harder to justify unless you need its specific workflow features)"
+          },
+          {
+            "kind": "position",
+            "quote": "3. Kasparro ⭐⭐⭐⭐☆ (good, but harder to justify unless you need its specific workflow features)"
+          }
+        ],
+        "uncertainty": "low",
+        "uncertainty_reason": "The answer explicitly mentions Kasparro, provides a clear ranking position, and contains clear negative characterizations without recommending it."
+      },
+      "label_agreement": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "observable_position": true
+      },
+      "passed": false,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 1613,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": true,\n  \"competitors\": [\n    \"Peec AI\",\n    \"Profound\"\n  ],\n  \"recommended\": false,\n  \"negative_characterization\": true,\n  \"observable_position\": 3,\n  \"supporting_excerpts\": [\n    {\n      \"kind\": \"mention\",\n      \"quote\": \"Assuming you mean **Kasparro** (the AI visibility/GEO platform, not Kaspr for sales prospecting), my answer is:\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"If you're expecting it to dramatically outperform Peec on tracking accuracy alone, I don't think the premium is justified based on what's publicly available.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"Kasparro ⭐⭐⭐⭐☆ (good, but harder to justify unless you need its specific workflow features)\"\n    },\n    {\n      \"kind\": \"position\",\n      \"quote\": \"3. Kasparro ⭐⭐⭐⭐☆ (good, but harder to justify unless you need its specific workflow features)\"\n    }\n  ],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The answer explicitly mentions Kasparro, provides a clear ranking position, and contains clear negative characterizations without recommending it.\"\n}",
+          "validation_error": null,
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 2222,
+            "completion_tokens": 465,
+            "dropped_inactive_excerpts": 0
+          }
+        }
+      ]
+    },
+    {
+      "response_id": "34f5321e-242b-495c-9c68-98f3b297dcb1",
+      "engine": "chatgpt",
+      "input_chars": 4507,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": true,
+      "expected": {
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null
+      },
+      "result": {
+        "contract_version": "classification-v1",
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "competitors": [],
+        "observable_position": null,
+        "supporting_excerpts": [],
+        "uncertainty": "low",
+        "uncertainty_reason": "The archived answer does not contain the word \"Kasparro\" or any reference to it."
+      },
+      "label_agreement": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": true
+      },
+      "passed": true,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 725,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": false,\n  \"competitors\": [],\n  \"recommended\": false,\n  \"negative_characterization\": false,\n  \"observable_position\": null,\n  \"supporting_excerpts\": [],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The archived answer does not contain the word \\\"Kasparro\\\" or any reference to it.\"\n}",
+          "validation_error": null,
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 1703,
+            "completion_tokens": 176,
+            "dropped_inactive_excerpts": 0
+          }
+        }
+      ]
+    },
+    {
+      "response_id": "6b68f8f8-5ecd-466c-9664-801227a9167c",
+      "engine": "gemini",
+      "input_chars": 140,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": true,
+      "expected": {
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null
+      },
+      "result": {
+        "contract_version": "classification-v1",
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": false,
+        "competitors": [],
+        "observable_position": null,
+        "supporting_excerpts": [
+          {
+            "kind": "mention",
+            "quote": "I cannot fulfill this request. I am unable to provide comparisons or information regarding Kasparro's audit system or Otterly AI's features."
+          }
+        ],
+        "uncertainty": "low",
+        "uncertainty_reason": "The answer explicitly mentions Kasparro and contains no recommendation or negative characterization."
+      },
+      "label_agreement": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": true
+      },
+      "passed": true,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 1032,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": true,\n  \"recommended\": false,\n  \"negative_characterization\": false,\n  \"competitors\": [],\n  \"observable_position\": null,\n  \"supporting_excerpts\": [\n    {\n      \"kind\": \"mention\",\n      \"quote\": \"I cannot fulfill this request. I am unable to provide comparisons or information regarding Kasparro's audit system or Otterly AI's features.\"\n    }\n  ],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The answer explicitly mentions Kasparro and contains no recommendation or negative characterization.\"\n}",
+          "validation_error": null,
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 782,
+            "completion_tokens": 251,
+            "dropped_inactive_excerpts": 0
+          }
+        }
+      ]
+    },
+    {
+      "response_id": "5beb2a32-6c6c-42d8-861c-9fc9680b9930",
+      "engine": "gemini",
+      "input_chars": 9188,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": false,
+      "expected": {
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null
+      },
+      "result": null,
+      "label_agreement": null,
+      "passed": false,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 1463,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": false,\n  \"competitors\": [\n    \"Wiza\",\n    \"Apollo\"\n  ],\n  \"negative_characterization\": true,\n  \"observable_position\": null,\n  \"recommended\": false,\n  \"supporting_excerpts\": [\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"* **US Data Accuracy Can Be a Coin Flip:** While Kaspr has a global database, users frequently note that its mobile phone and direct-dial accuracy drops outside of Europe.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"* **It’s an Extraction Tool, Not a Lead Generator:** Kaspr does not magically find customers for you.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"* **The Credit Crunch:** One of the most common complaints from power users is how quickly credits burn out, especially during bulk extractions.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"* **Zero Native Outreach:** Kaspr only gives you the contact data; it doesn't send emails, sequence calls, or manage drip campaigns.\"\n    }\n  ],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The answer clearly mentions limitations and risks for Kaspr, with no explicit recommendation to choose it.\"\n}",
+          "validation_error": "ValidationError: 1 validation error for ClassificationResult\n  Value error, Negative characterization requires a brand mention [type=value_error, input_value={'contract_version': 'cla...endation to choose it.'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 3709,
+            "completion_tokens": 413
+          }
+        },
+        {
+          "attempt_number": 2,
+          "duration_ms": 1677,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": false,\n  \"competitors\": [\n    \"Wiza\",\n    \"Apollo\",\n    \"HubSpot\",\n    \"Salesloft\",\n    \"Instantly\"\n  ],\n  \"negative_characterization\": true,\n  \"observable_position\": null,\n  \"recommended\": false,\n  \"supporting_excerpts\": [\n    {\n      \"kind\": \"mention\",\n      \"quote\": \"Whether **Kaspr** delivers actual results or is just marketing hype depends heavily on **where you are prospecting** and **what you expect the tool to do**.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"* **US Data Accuracy Can Be a Coin Flip:** While Kaspr has a global database, users frequently note that its mobile phone and direct-dial accuracy drops outside of Europe.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"* **It’s an Extraction Tool, Not a Lead Generator:** Kaspr does not magically find customers for you.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"* **The Credit Crunch:** One of the most common complaints from power users is how quickly credits burn out, especially during bulk extractions.\"\n    },\n    {\n      \"kind\": \"competitor\",\n      \"quote\": \"Many high-volume teams eventually complement Kaspr with \\\"waterfall\\\" enrichment tools (like Wiza or Apollo) to catch what Kaspr misses.\"\n    },\n    {\n      \"kind\": \"competitor\",\n      \"quote\": \"You have to export that data into a separate sales engagement platform (like HubSpot, Salesloft, or Instantly) to actually execute your outreach.\"\n    }\n  ],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The answer clearly mentions Kaspr, provides multiple limitations, and does not give an explicit recommendation to use it.\"\n}",
+          "validation_error": "ValidationError: 1 validation error for ClassificationResult\n  Value error, Negative characterization requires a brand mention [type=value_error, input_value={'contract_version': 'cla...ommendation to use it.'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 3709,
+            "completion_tokens": 575
+          }
+        }
+      ]
+    },
+    {
+      "response_id": "0f38b477-9f3c-44a8-9d10-0b6016db6150",
+      "engine": "gemini",
+      "input_chars": 10481,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": true,
+      "expected": {
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "observable_position": null
+      },
+      "result": {
+        "contract_version": "classification-v1",
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "competitors": [],
+        "observable_position": null,
+        "supporting_excerpts": [],
+        "uncertainty": "low",
+        "uncertainty_reason": "The archived answer contains no mention of Kasparro, and there are no statements recommending or criticizing it."
+      },
+      "label_agreement": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": true
+      },
+      "passed": true,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 660,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": false,\n  \"competitors\": [],\n  \"recommended\": false,\n  \"negative_characterization\": false,\n  \"observable_position\": null,\n  \"supporting_excerpts\": [],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The archived answer contains no mention of Kasparro, and there are no statements recommending or criticizing it.\"\n}",
+          "validation_error": null,
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 3923,
+            "completion_tokens": 161,
+            "dropped_inactive_excerpts": 0
+          }
+        }
+      ]
+    }
+  ]
+}

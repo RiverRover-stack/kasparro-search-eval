@@ -1,0 +1,234 @@
+{
+  "split": "development",
+  "provider": "groq",
+  "cases": [
+    {
+      "response_id": "ac5bdf24-6a6e-49a0-abf5-2755ff3b42bc",
+      "engine": "chatgpt",
+      "input_chars": 3855,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": true,
+      "label_agreement": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": true
+      },
+      "passed": true,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 1080,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": true,\n  \"competitors\": [],\n  \"recommended\": false,\n  \"negative_characterization\": true,\n  \"observable_position\": null,\n  \"supporting_excerpts\": [\n    {\n      \"kind\": \"mention\",\n      \"quote\": \"Kasparro positions itself as an \\\"AI Revenue Engine\\\" that helps brands become more visible in AI assistants like ChatGPT.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"However, I couldn't find independent evidence showing that Kasparro consistently delivers measurable improvements for B2B SaaS companies specifically.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"If they can't answer those with real customer data, I'd be cautious.\"\n    }\n  ],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The answer clearly mentions Kasparro, provides cautionary statements, and does not give an explicit recommendation.\"\n}",
+          "validation_error": null,
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 2424,
+            "completion_tokens": 334,
+            "dropped_inactive_excerpts": 0
+          }
+        }
+      ],
+      "result": {
+        "contract_version": "classification-v1",
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "competitors": [],
+        "observable_position": null,
+        "supporting_excerpts": [
+          {
+            "kind": "mention",
+            "quote": "Kasparro positions itself as an \"AI Revenue Engine\" that helps brands become more visible in AI assistants like ChatGPT."
+          },
+          {
+            "kind": "negative_characterization",
+            "quote": "However, I couldn't find independent evidence showing that Kasparro consistently delivers measurable improvements for B2B SaaS companies specifically."
+          },
+          {
+            "kind": "negative_characterization",
+            "quote": "If they can't answer those with real customer data, I'd be cautious."
+          }
+        ],
+        "uncertainty": "low",
+        "uncertainty_reason": "The answer clearly mentions Kasparro, provides cautionary statements, and does not give an explicit recommendation."
+      }
+    },
+    {
+      "response_id": "a3fdd8bb-bcd9-4608-9786-ad4b3a2c7dc2",
+      "engine": "aimode",
+      "input_chars": 4561,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": true,
+      "label_agreement": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": true
+      },
+      "passed": true,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 1782,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": true,\n  \"competitors\": [],\n  \"negative_characterization\": true,\n  \"observable_position\": null,\n  \"recommended\": false,\n  \"supporting_excerpts\": [\n    {\n      \"kind\": \"mention\",\n      \"quote\": \"Based on my research, Kasparro is not a widely recognized, top-tier agency or tool in the AI visibility space (AISO - AI Search Optimization) for B2B SaaS according to public search results as of July 2026.\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"Based on my research, Kasparro is not a widely recognized, top-tier agency or tool in the AI visibility space (AISO - AI Search Optimization) for B2B SaaS according to public search results as of July 2026.\"\n    }\n  ],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The answer explicitly states Kasparro is not widely recognized, providing a clear negative characterization without ambiguity.\"\n}",
+          "validation_error": null,
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 2279,
+            "completion_tokens": 451,
+            "dropped_inactive_excerpts": 0
+          }
+        }
+      ],
+      "result": {
+        "contract_version": "classification-v1",
+        "brand_mentioned": true,
+        "recommended": false,
+        "negative_characterization": true,
+        "competitors": [],
+        "observable_position": null,
+        "supporting_excerpts": [
+          {
+            "kind": "mention",
+            "quote": "Based on my research, Kasparro is not a widely recognized, top-tier agency or tool in the AI visibility space (AISO - AI Search Optimization) for B2B SaaS according to public search results as of July 2026."
+          },
+          {
+            "kind": "negative_characterization",
+            "quote": "Based on my research, Kasparro is not a widely recognized, top-tier agency or tool in the AI visibility space (AISO - AI Search Optimization) for B2B SaaS according to public search results as of July 2026."
+          }
+        ],
+        "uncertainty": "low",
+        "uncertainty_reason": "The answer explicitly states Kasparro is not widely recognized, providing a clear negative characterization without ambiguity."
+      }
+    },
+    {
+      "response_id": "729e6864-9290-4336-a32e-b9a27ce150a6",
+      "engine": "gemini",
+      "input_chars": 6201,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": true,
+      "label_agreement": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": true
+      },
+      "passed": true,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 111,
+          "raw_output": null,
+          "validation_error": "Groq HTTP 429: Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kf10a2dzf6f9x4g3ztnsjzjv` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4600, Requested 5273. Please try again in 14.0475s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+          "provider_metadata": {
+            "http_status": 429,
+            "provider_error": {
+              "type": "tokens",
+              "code": "rate_limit_exceeded",
+              "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kf10a2dzf6f9x4g3ztnsjzjv` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4600, Requested 5273. Please try again in 14.0475s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing"
+            },
+            "retry_after_seconds": 15.0
+          }
+        },
+        {
+          "attempt_number": 2,
+          "duration_ms": 2072,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": true,\n  \"competitors\": [\n    \"AthenaHQ\"\n  ],\n  \"negative_characterization\": true,\n  \"observable_position\": null,\n  \"recommended\": true,\n  \"supporting_excerpts\": [\n    {\n      \"kind\": \"mention\",\n      \"quote\": \"When comparing **Kasparro** and **AthenaHQ** for AI brand tracking (Generative Engine Optimization / AEO), \\\"trustworthiness\\\" usually comes down to **founding pedigree, enterprise readiness, and data transparency**.\"\n    },\n    {\n      \"kind\": \"recommendation\",\n      \"quote\": \"* Choose **Kasparro** if you prefer a **hands-on, boutique approach** where tracking is directly tied to active implementation and human engineering support rather than purely self-serve software dashboards.[bebee.com](https://bebee.com/in/jobs/sales-development-representative-kasparro-ai-bengaluru-karnataka--t7xk-768443556#:~:text=Tools%3A%20*%20About%20Kasparro.%20An%20AI%20Visibility,%28Reddit%2C%20reviews%2C%20YouTube%2C%20Wikipedia%29%2C%20and%20authority%2Fcitation%20building.)\"\n    },\n    {\n      \"kind\": \"negative_characterization\",\n      \"quote\": \"* **Potential Drawbacks:** As a smaller, high-velocity boutique player, it lacks the massive Silicon Valley institutional backing (like YC) that AthenaHQ boasts, meaning public reviews and third-party validation are scarcer.\"\n    },\n    {\n      \"kind\": \"competitor\",\n      \"quote\": \"When comparing **Kasparro** and **AthenaHQ** for AI brand tracking (Generative Engine Optimization / AEO), \\\"trustworthiness\\\" usually comes down to **founding pedigree, enterprise readiness, and data transparency**.\"\n    }\n  ],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The answer explicitly mentions Kasparro, recommends it for certain needs, and also lists a drawback, providing clear evidence for all required fields.\"\n}",
+          "validation_error": null,
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 3927,
+            "completion_tokens": 653,
+            "dropped_inactive_excerpts": 0
+          }
+        }
+      ],
+      "result": {
+        "contract_version": "classification-v1",
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "competitors": [
+          "AthenaHQ"
+        ],
+        "observable_position": null,
+        "supporting_excerpts": [
+          {
+            "kind": "mention",
+            "quote": "When comparing **Kasparro** and **AthenaHQ** for AI brand tracking (Generative Engine Optimization / AEO), \"trustworthiness\" usually comes down to **founding pedigree, enterprise readiness, and data transparency**."
+          },
+          {
+            "kind": "recommendation",
+            "quote": "* Choose **Kasparro** if you prefer a **hands-on, boutique approach** where tracking is directly tied to active implementation and human engineering support rather than purely self-serve software dashboards.[bebee.com](https://bebee.com/in/jobs/sales-development-representative-kasparro-ai-bengaluru-karnataka--t7xk-768443556#:~:text=Tools%3A%20*%20About%20Kasparro.%20An%20AI%20Visibility,%28Reddit%2C%20reviews%2C%20YouTube%2C%20Wikipedia%29%2C%20and%20authority%2Fcitation%20building.)"
+          },
+          {
+            "kind": "negative_characterization",
+            "quote": "* **Potential Drawbacks:** As a smaller, high-velocity boutique player, it lacks the massive Silicon Valley institutional backing (like YC) that AthenaHQ boasts, meaning public reviews and third-party validation are scarcer."
+          },
+          {
+            "kind": "competitor",
+            "quote": "When comparing **Kasparro** and **AthenaHQ** for AI brand tracking (Generative Engine Optimization / AEO), \"trustworthiness\" usually comes down to **founding pedigree, enterprise readiness, and data transparency**."
+          }
+        ],
+        "uncertainty": "low",
+        "uncertainty_reason": "The answer explicitly mentions Kasparro, recommends it for certain needs, and also lists a drawback, providing clear evidence for all required fields."
+      }
+    },
+    {
+      "response_id": "b9f436b9-af39-486a-bbbe-d4692e55d6fb",
+      "engine": "aimode",
+      "input_chars": 6729,
+      "model_identifier": "openai/gpt-oss-120b",
+      "validated": true,
+      "label_agreement": {
+        "brand_mentioned": true,
+        "recommended": true,
+        "negative_characterization": true,
+        "observable_position": true
+      },
+      "passed": true,
+      "attempts": [
+        {
+          "attempt_number": 1,
+          "duration_ms": 106,
+          "raw_output": null,
+          "validation_error": "Groq HTTP 429: Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kf10a2dzf6f9x4g3ztnsjzjv` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 6859, Requested 3489. Please try again in 17.61s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+          "provider_metadata": {
+            "http_status": 429,
+            "provider_error": {
+              "type": "tokens",
+              "code": "rate_limit_exceeded",
+              "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01kf10a2dzf6f9x4g3ztnsjzjv` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 6859, Requested 3489. Please try again in 17.61s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing"
+            },
+            "retry_after_seconds": 18.0
+          }
+        },
+        {
+          "attempt_number": 2,
+          "duration_ms": 559,
+          "raw_output": "{\n  \"contract_version\": \"classification-v1\",\n  \"brand_mentioned\": false,\n  \"recommended\": false,\n  \"negative_characterization\": false,\n  \"competitors\": [],\n  \"observable_position\": null,\n  \"supporting_excerpts\": [],\n  \"uncertainty\": \"low\",\n  \"uncertainty_reason\": \"The archived answer does not contain the word \\\"Kasparro\\\" or any reference to it.\"\n}",
+          "validation_error": null,
+          "provider_metadata": {
+            "finish_reason": "stop",
+            "prompt_tokens": 2414,
+            "completion_tokens": 152,
+            "dropped_inactive_excerpts": 0
+          }
+        }
+      ],
+      "result": {
+        "contract_version": "classification-v1",
+        "brand_mentioned": false,
+        "recommended": false,
+        "negative_characterization": false,
+        "competitors": [],
+        "observable_position": null,
+        "supporting_excerpts": [],
+        "uncertainty": "low",
+        "uncertainty_reason": "The archived answer does not contain the word \"Kasparro\" or any reference to it."
+      }
+    }
+  ],
+  "all_passed": true
+}
