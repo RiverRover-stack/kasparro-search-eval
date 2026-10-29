@@ -253,7 +253,7 @@
     }
   ],
   "active_time": {
-    "hours": null,
-    "note": "owner to supply real hours"
+    "hours": 11,
+    "note": "This is the total time including testing, development, and review. It does include the time spent on API calls as well."
   }
 }
