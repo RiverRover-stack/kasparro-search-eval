@@ -1,0 +1,810 @@
+{
+  "analysis_id": "f93000a1-5b97-4146-a72d-6fecb9f1f160",
+  "status": "completed",
+  "model": "openai/gpt-oss-120b",
+  "prompt_version": "visibility-classifier-v6",
+  "execution_mode": "rules+hosted_groq",
+  "sample_rule_version": "live-sample-v1",
+  "selected_response_ids": [
+    "b7768287-1be1-4089-bbbd-c0908289b0b9",
+    "8f761923-2485-4a8f-817a-563bc1396fbf",
+    "0f7ae466-5a77-42ce-9018-37f243f7d886",
+    "95f393e4-e371-4acf-8c6e-1a74bf65c045",
+    "7a570f6f-eea5-4aba-b499-711f7cd1a1ba",
+    "90b3eb79-cdf8-4fdb-ac9b-43089065a092",
+    "51366d92-2978-4654-b6fb-1f5dca180980",
+    "57210f17-4436-4356-9f0f-3f6434ef0a6d",
+    "449f8530-b47a-411c-9bec-1b5b6e0552cb",
+    "1b58c598-f4b9-43f1-b899-2a25d7ddd9cb",
+    "e3969fc6-5f7f-4994-a152-d9072be6f173",
+    "4933e11e-0697-4246-bdda-45a160528a2a",
+    "0701bd6b-a5c3-4999-9c2a-51145cab15df",
+    "5492b420-7fa5-4de4-ab2c-6c4412e5b18d",
+    "511317a1-af77-43f1-90a2-cfa92f812676",
+    "71ec5309-af52-4071-af21-bd282ce41cce",
+    "9ef923c0-987a-4df8-96f4-6072f6bf16ee",
+    "0f217f49-ee02-44ea-853d-61fbcc7a9895",
+    "9aefbc5a-d270-42d8-b07f-1945b2e98c76",
+    "65d83d99-a531-4149-bdc6-5dff9284e6f4",
+    "fa0dff8e-b96c-49b0-bcf3-0d410451bdf4",
+    "d5043498-a516-463e-b97b-5fc917f5e26a",
+    "f5109b67-a854-4fa0-a05f-e9a88b5b3edb",
+    "533fc340-e610-410f-9cb0-40c064506ad1",
+    "bc213889-4850-4ae2-bf8e-af1159ff6f9c",
+    "1d2dc007-0757-480d-a086-6b6e2e13c463",
+    "44a32b81-7166-44dc-bac3-8cd2ae40da73",
+    "9630ab41-2e94-4cfc-b22f-478264263a56",
+    "b87e2b44-032c-40d8-92e5-a8223212d3d4",
+    "66854c1c-447b-4eae-9601-d1a5895285e2",
+    "1fda2a12-a2df-4ab1-abd5-17b7746bc833",
+    "b064461f-7855-477d-bded-95dbb6e9562c",
+    "20958c20-9648-4b12-bbb6-efbbff33d0fe",
+    "d748ed0e-2cc5-4fc7-9a94-64811235a4c9",
+    "95a7db89-bcd6-49fa-bd03-ab098605fcc1",
+    "861a9955-69ab-46ed-927c-fd336bc37893",
+    "da579a76-82ed-4c77-927d-6af8329d0a3e",
+    "4abad2ab-5d73-4104-bc45-1d7a50c8f244",
+    "c937b823-bb09-4fcc-ab79-449d54f906d2"
+  ],
+  "counts": {
+    "eligible": 150,
+    "successful": 105,
+    "failed": 12,
+    "skipped": 33
+  },
+  "prompt_tokens": 55403,
+  "completion_tokens": 11198,
+  "duration_seconds": 2104.0,
+  "responses": [
+    {
+      "response_id": "003061a9-6cdd-45a0-89c4-9a139020da4a",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "00f943a2-5355-4205-a6e0-a3ce5de97c51",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "016fc85b-120b-46fe-958a-53724ad55363",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "02c5ee8d-0ffe-4940-bf93-5793e7b01528",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "049203e7-be85-4b73-abb7-3e1f17a6273c",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "05bdabb0-f779-42bd-9a31-f33b53274e32",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "0697376e-335d-45ef-a593-bc12c5e1ecf3",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "0701bd6b-a5c3-4999-9c2a-51145cab15df",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/1/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Based on 2026 market analysis, determining if Kasparro is worth the money compared to Peec AI depends on whether you need a dedicated, deep-monitoring tool or a broader, integrated solution.', '**Peec AI is currently a premium, specialized leader** focused on tracking how AI (ChatGPT, Gemini, etc.) talks about your brand, with high-level reporting and unlimited seats. It is considered strong for in-house teams with SEO specialists who need to benchmark visibility.[](https://medium.com/@timsoulo/peec-ai-alternatives-why-i-think-ahrefs-brand-radar-is-the-better-choice-acf828b79cc9) [[1]](https://medium.com/@timsoulo/peec-ai-alternatives-why-i-think-ahrefs-brand-radar-is-the-better-choice-acf828b79cc9)[[2]](https://ca"
+    },
+    {
+      "response_id": "08f81acc-0824-4e3a-a5d5-58446e2a6a90",
+      "status": "skipped",
+      "reason": "excluded_labelled_evaluation_case: frozen separately"
+    },
+    {
+      "response_id": "0e2c8f07-c483-493d-a9fc-467efc857faa",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "0eb89a67-4548-4810-ba1c-1881a919823d",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "0f217f49-ee02-44ea-853d-61fbcc7a9895",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "0f38b477-9f3c-44a8-9d10-0b6016db6150",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "0f7ae466-5a77-42ce-9018-37f243f7d886",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "11010066-8ed2-4741-856e-9259ae1a377b",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "136b8240-008c-46ff-b744-592c4d859e98",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "13c261d3-f05a-444f-81d6-69e769af59cf",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "14a5d324-5cc3-4554-a8ae-9643d5fafa73",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "174932c6-7662-448c-8fb7-3217096c51ff",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "17748847-e19d-4e05-97d1-bcc616cd758f",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "1a63691b-8c9f-4e1e-ae3b-652f85056e89",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "1abaa05d-1d41-4164-b554-1fc1cba01d79",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "1b58c598-f4b9-43f1-b899-2a25d7ddd9cb",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/2/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Based on 2026 data, **Kasparro** is designed for high-speed, targeted remediation in e-commerce—such as resolving product catalog issues in as little as 11 days—making it highly specialized for rapid, focused deployment. **Dageno AI** is focused on GEO (Generative Engine Optimization) tracking for marketing teams, which generally requires a slower, ongoing monitoring approach rather than a quick, singular onboarding.[](https://kasparro.com/) [[1]](https://kasparro.com/)[[2]](https://www.reddit.com/r/GEO__AI__SEO/comments/1roukii/dageno_ai_vs_profound_vs_scrunch_ai_which_ai/)[[3]](https://dageno.ai/blog)[[4]](https://www.facebook.com/techinasia/posts/-still-believe-data-is-the-new-gold-think-again-firms-across-asia-"
+    },
+    {
+      "response_id": "1b626742-8afd-4a92-9ba8-8b42fcbfef00",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "1c2f6b84-50ad-4192-a20e-8b000e3aa7e1",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "1cf6f5bc-7a29-4128-b51d-aa56891b08f4",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "1d2dc007-0757-480d-a086-6b6e2e13c463",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/1/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'If you mean **Kasparro** (the B2B SaaS growth/outbound agency, not Kaspr), I couldn\\'t find reliable public pricing or enough verified information to judge whether it\\'s objectively overpriced. Most agencies like this use custom proposals rather than published rates.', 'If you mean **Kasparro** (the B2B SaaS growth/outbound agency, not Kaspr), I couldn\\'t find reliable public pricing or enough verified information to judge whether it\\'s objectively overpriced.', 'Most agencies like this use custom proposals rather than published rates.', 'Whether it\\'s \"overpriced\" depends on three things:', '- **Stage of your startup.** If you\\'re pre-PMF or under ~$50k MRR, premium outbound agencies often struggle to generate eno"
+    },
+    {
+      "response_id": "1fda2a12-a2df-4ab1-abd5-17b7746bc833",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "20958c20-9648-4b12-bbb6-efbbff33d0fe",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "2fb1175e-1a18-4fe1-b41b-a75004877ab4",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "2fef505c-f845-43d3-aee0-8926d21bc31e",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "34f5321e-242b-495c-9c68-98f3b297dcb1",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "35b7cd2b-eef2-4767-84a7-c9e6aff8fcf5",
+      "status": "skipped",
+      "reason": "excluded_labelled_evaluation_case: frozen separately"
+    },
+    {
+      "response_id": "37277abf-79bb-4adf-9213-6bcfbe1c6fbf",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "3d06d4f2-061d-44e4-9a7b-0628a777fb00",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "3d2402de-0de4-4965-bcc5-9c077ddddcd2",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "3f18cf56-f064-4700-ac81-f5541283972b",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "40d036db-4c8f-4823-af6f-0a6eaf1fcb8b",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "42b3f554-e490-43a3-bfcf-08be6cb61261",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "42e35106-67bf-48c8-aaca-4e8ccf910e77",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "4334ee7a-6315-4312-b0ca-0a58bcd6270c",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "449f8530-b47a-411c-9bec-1b5b6e0552cb",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "44a32b81-7166-44dc-bac3-8cd2ae40da73",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "470803a8-9759-461f-b1e3-8ecf10a6e052",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "4933e11e-0697-4246-bdda-45a160528a2a",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "4abad2ab-5d73-4104-bc45-1d7a50c8f244",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "4b5b2098-bdb6-4ff7-a1a2-2587f210f444",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "4b70d3c9-26a1-46ab-94b7-fc4c02857518",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "4b827e87-9cf6-4188-98b9-937d5678a8e1",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "4ece3df1-8779-4853-89be-92f5a0100736",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "4f391c44-7e1a-4d6b-96de-302bc426dfbe",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "505cb278-6145-4408-95d1-f42cdce2c695",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "50ea9a06-36e5-4c74-a6b6-25d981eec70a",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "511317a1-af77-43f1-90a2-cfa92f812676",
+      "status": "failed",
+      "reason": "ValueError: A brand mention requires a Kasparro-containing supporting excerpt"
+    },
+    {
+      "response_id": "51366d92-2978-4654-b6fb-1f5dca180980",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "533fc340-e610-410f-9cb0-40c064506ad1",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "53414465-6ef7-4fb2-985f-7586a286e801",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "537a5dad-1af6-48c5-92ee-37ec68ed22d7",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "5492b420-7fa5-4de4-ab2c-6c4412e5b18d",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "57210f17-4436-4356-9f0f-3f6434ef0a6d",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Yes, **Kasparro** —and similar specialized **Perplexity SEO** or **AI Search Optimization** strategies—can help an enterprise software brand increase its visibility, citations, and authority within Perplexity answers.[](https://www.greenwebmedia.com/how-to-make-your-business-show-up-in-chatgpt-gemini-and-perplexity-answers/) [[1]](https://www.greenwebmedia.com/how-to-make-your-business-show-up-in-chatgpt-gemini-and-perplexity-answers/)[[2]](https://justdigitalgurus.com/perplexity-seo-service/)[[3]](https://searchforecast.com/perplexity-seo-citation-optimization/)', 'Perplexity behaves differently than traditional search engines, often citing only one or two authoritative sources per query.[](https://keyword.com/blo"
+    },
+    {
+      "response_id": "58034df8-0d67-4878-827a-376afa1efc2b",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "5beb2a32-6c6c-42d8-861c-9fc9680b9930",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "5c9aca1f-7a50-476c-98f7-394a9c40bbc3",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "612ccde7-636c-4978-ae2b-9a55fcdc455a",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "62da805a-1460-43b4-80b9-3bafab5f7941",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "65d83d99-a531-4149-bdc6-5dff9284e6f4",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Here\\'s how I\\'d compare them:', '| Factor | Kasparro | AthenaHQ |', '|--------|-----------|-----------|', '| Public track record | Very new (launched publicly in 2026) [kasparro.com](https://kasparro.com/?utm_source=chatgpt.com) | More established in the AI visibility/GEO space with public customer references. [answers.athenahq.ai](https://answers.athenahq.ai/athenahq-ai-search-visibility-platform-official?utm_source=chatgpt.com)[answers.athenahq.ai](https://answers.athenahq.ai/athenahq-pricing-ai-visibility-platform?utm_source=chatgpt.com) |', '| Public track record | Very new (launched publicly in 2026) [kasparro.com](https://kasparro.com/?utm_source=chatgpt.com) | More established in the AI visibility/GEO space"
+    },
+    {
+      "response_id": "660dd26e-bada-40be-b3fc-8f04f4f839e1",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "66854c1c-447b-4eae-9601-d1a5895285e2",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "67b714d5-bf90-42c2-a360-1d1d3149c1f8",
+      "status": "skipped",
+      "reason": "excluded_labelled_evaluation_case: frozen separately"
+    },
+    {
+      "response_id": "68d96336-d387-4bac-9662-8596e99dd6a3",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "69e826c2-570d-4213-ba60-799ea925d106",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "6b68f8f8-5ecd-466c-9664-801227a9167c",
+      "status": "skipped",
+      "reason": "excluded_labelled_evaluation_case: frozen separately"
+    },
+    {
+      "response_id": "6b6e79d3-a582-4d23-8fa6-714c9e982af2",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "6ba5d428-1b45-4c6d-9263-73129d059b01",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "71ec5309-af52-4071-af21-bd282ce41cce",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "721ceff5-a4e3-439b-9b56-a8df34f6551b",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "729e6864-9290-4336-a32e-b9a27ce150a6",
+      "status": "skipped",
+      "reason": "excluded_labelled_evaluation_case: frozen separately"
+    },
+    {
+      "response_id": "72e3c05f-de18-4cc2-8e24-96ffb2e3d593",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "7a570f6f-eea5-4aba-b499-711f7cd1a1ba",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Based on the search results, there is no direct information regarding the cancellation difficulty of \"Kasparro,\" but it appears to be a specialized B2B AI tool rather than a standard consumer app.[](https://www.linkedin.com/posts/kasparro-ai_hello-world-in-1997-the-greatest-chess-activity-7479763964139061249-uxf-) [[1]](https://www.linkedin.com/posts/kasparro-ai_hello-world-in-1997-the-greatest-chess-activity-7479763964139061249-uxf-)[[2]](https://in.linkedin.com/jobs/view/founding-account-executive-at-kasparro-ai-4435070006)', 'However, the provided search results show a detailed cancellation guide for **Kaspr** (a similarly named sales tool) which may be helpful for context. If Kasparro operates with similar B2B "
+    },
+    {
+      "response_id": "7ed900ae-a524-4c47-969c-2c43b2b0b620",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "847af3d3-88c3-4cad-ad9f-a1a4d6889052",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "847be62a-f50a-4b19-ab6c-43965fbae5ed",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "861a9955-69ab-46ed-927c-fd336bc37893",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "86af832e-ca04-4b47-b4d5-ff9dd62f2994",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "874f97b5-f122-4ac0-b53c-c35ddc82291d",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "89625a58-1069-4b0b-a3eb-1b979d9ee15f",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "89babd5f-9a94-4d2c-b2ab-4b7c97345587",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "8c3f3f3f-1bc5-4cf3-a099-7cccfda9993a",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "8c4a22e7-71a4-4a71-bc43-9a03f5d43480",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "8ceb3779-0473-45b0-b935-3cb8fdf6f479",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "8e7809fd-1b15-402f-98ec-ebc3a6eed6f9",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "8f2b7e98-e566-47c8-bf5b-35659ddec99e",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "8f761923-2485-4a8f-817a-563bc1396fbf",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "9074ca1a-a68c-4c1d-9473-e0e9748eda2e",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "90b3eb79-cdf8-4fdb-ac9b-43089065a092",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "91489c39-b122-4ac6-9702-f69600360658",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "930518b9-de1e-445f-9f5d-68c3986e7836",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "953e6675-8bec-4fe1-b53a-2fbcc9df00de",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "95a7db89-bcd6-49fa-bd03-ab098605fcc1",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'No, **Kasparro** (an AI visibility and brand intelligence platform) is **not missing** major AI search engines like Gemini or Claude.[v0.app](https://v0.app/chat/kasparro-frontend-build-ugvVuU7wtwo#:~:text=Kasparro%20frontend%20build%20-%20v0%20by%20Vercel.,system.%20This%20is%20not%20a%20landing-page%20clone.)', 'Official product documentation, engineering specifications, and company positioning confirm that Kasparro actively monitors, audits, and measures brand representation across **both Gemini and Claude**, alongside other major AI engines like ChatGPT, Perplexity, and Google AI Mode.[getmereferred.com](https://getmereferred.com/in/job-listing/sales-development-representative-kasparro-ai-inkabengaluru-2-to-5-y"
+    },
+    {
+      "response_id": "95f393e4-e371-4acf-8c6e-1a74bf65c045",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "9630ab41-2e94-4cfc-b22f-478264263a56",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "9a8ef397-694c-465a-81d4-09df1bc1342e",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "9aefbc5a-d270-42d8-b07f-1945b2e98c76",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "9da8423e-08dc-4067-8f25-5ef142a5201c",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "9ef923c0-987a-4df8-96f4-6072f6bf16ee",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "a3fdd8bb-bcd9-4608-9786-ad4b3a2c7dc2",
+      "status": "skipped",
+      "reason": "excluded_labelled_evaluation_case: frozen separately"
+    },
+    {
+      "response_id": "a46bc527-5558-40b7-a5b8-f1c22435dd03",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "a49eba68-bda8-4278-95ac-4334391bc7f3",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "a6e9c6c4-1ac1-4f7f-bdc9-35ccca16ca7d",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "ac5bdf24-6a6e-49a0-abf5-2755ff3b42bc",
+      "status": "skipped",
+      "reason": "excluded_labelled_evaluation_case: frozen separately"
+    },
+    {
+      "response_id": "af07e6ca-910a-4aad-90ce-5efa80e1b2a1",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "af2462e6-b4a0-47b2-a540-a374b22e0d5f",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "b0154a95-8a6c-45fd-a3b6-5ab99872b33a",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "b064461f-7855-477d-bded-95dbb6e9562c",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/1/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Comparing **Kasparro** (often searched or spelled as *Kaspr*) and **Peec AI** is a classic \"apples to oranges\" dilemma because they serve completely different parts of the business funnel:', '* **Kasparro / Kaspr:** A **sales intelligence and B2B prospecting tool** used to find phone numbers, emails, and LinkedIn contact data.[saleshive.com](https://saleshive.com/vendors/kaspr#:~:text=Teams%20typically%20use%20it%20for%20cold%20Email,120%2B%20data%20sources.%20*%20Bulk%20enrichment%20workflows.)', '* **Peec AI:** An **AI search visibility (GEO / AEO) platform** used by marketers to track how often brands are cited in ChatGPT, Perplexity, and Google AI Overviews.[pikaseo.com](https://pikaseo.com/blog/peec-ai-review#"
+    },
+    {
+      "response_id": "b40168e8-acf4-4430-b22d-8c484fab846f",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "b7768287-1be1-4089-bbbd-c0908289b0b9",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "b87e2b44-032c-40d8-92e5-a8223212d3d4",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "b8c771d4-1394-47bf-b185-ef294ef6d5f6",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "b9042e76-dd8d-4ecb-8dae-bdd37ef04754",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "b9f436b9-af39-486a-bbbe-d4692e55d6fb",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "bb1301e0-c91a-4d8a-a954-f9fecd87a4d5",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "bc011973-55ba-4942-ae90-4f09849a221d",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "bc213889-4850-4ae2-bf8e-af1159ff6f9c",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "bd13800f-700c-405a-ab1e-7f37f24669e7",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "c3b978b0-d181-4941-8d88-241cab857499",
+      "status": "skipped",
+      "reason": "excluded_labelled_evaluation_case: frozen separately"
+    },
+    {
+      "response_id": "c5344e96-4a42-4f17-818b-774beaef5ed7",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "c66bc7a5-3144-48a3-9a50-0a30523c0bc1",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "c71540a7-7010-4324-ae6d-036c3f8898ce",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "c73aba11-2772-42d0-a20f-17f015969a31",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "c7e908af-8c70-469d-8330-5080cc50741e",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "c937b823-bb09-4fcc-ab79-449d54f906d2",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "d37e9604-d0ae-4021-a73f-02fd822e8d01",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "d5043498-a516-463e-b97b-5fc917f5e26a",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "d748ed0e-2cc5-4fc7-9a94-64811235a4c9",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "d8e9834b-2520-41f3-a18f-95735da3a66f",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "da579a76-82ed-4c77-927d-6af8329d0a3e",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'When comparing onboarding speeds for **Kasparro** and **Dageno AI** (both operating in the Generative Engine Optimization / AI brand intelligence space), there are no official, standardized benchmarks or public metrics directly measuring their time-to-value or setup velocity.[www.progressiverobot.com](https://www.progressiverobot.com/2026/04/17/what-is-dageno-ai/#:~:text=What%20is%20Dageno%20AI%3F%20Dageno%20AI%20is,Claude%2C%20Gemini%2C%20Grok%2C%20and%20Google%20AI%20Overview.)', 'To provide the most accurate assessment of how their setup processes compare:', '* **Platform Complexity:** Both tools require connecting brand domains, setting target prompts/keywords, and configuring competitor tracking across LLMs (l"
+    },
+    {
+      "response_id": "db36a033-8f83-47bb-a0ba-8c35539f8aed",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "e2bb9e59-578d-474c-b7e1-ee8c29b36d90",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "e3969fc6-5f7f-4994-a152-d9072be6f173",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/0/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Yes, both US and India-based brands can engage with **Kasparro AI** . As of July 2026, the company actively serves customers and holds, or is hiring for, roles in both regions.[](https://bebee.com/in/jobs/product-manager-kasparro-ai-bengaluru--fj-2284179710) [[1]](https://bebee.com/in/jobs/product-manager-kasparro-ai-bengaluru--fj-2284179710)[[2]](https://in.linkedin.com/jobs/view/product-manager-at-kasparro-ai-4443690361)', 'Yes, both US and India-based brands can engage with **Kasparro AI** .', 'As of July 2026, the company actively serves customers and holds, or is hiring for, roles in both regions.[](https://bebee.com/in/jobs/product-manager-kasparro-ai-bengaluru--fj-2284179710) [[1]](https://bebee.com/in/jobs/"
+    },
+    {
+      "response_id": "e4be4da9-d2cd-40ed-876a-185c4cfbac71",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "e6415205-604e-4fae-988e-5fa13dfb8002",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "ead5da6c-cd59-4bad-827e-49ae12f4e232",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "ee8878c5-69b1-41c4-82a0-13a83c237f2f",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "f2081176-45c1-4b0b-afec-0f0a65110fc6",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "f3b89676-4b0a-4343-a080-2fea2a3508cf",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    },
+    {
+      "response_id": "f5100351-d640-4d2a-ad89-968dfa508b01",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "f5109b67-a854-4fa0-a05f-e9a88b5b3edb",
+      "status": "failed",
+      "reason": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supporting_excerpts/1/quote' does not validate with /properties/supporting_excerpts/items/properties/quote/enum: value must be one of 'Yes—based on what Kasparro says it does, helping enterprise software brands become more visible in Perplexity answers is one of its core use cases. According to the company, it focuses on improving AI visibility across engines including Perplexity, ChatGPT, Gemini, and Google\\'s AI experiences by combining monitoring, technical optimization, content improvements, off-site reputation work, and authority building. [in.linkedin.com](https://in.linkedin.com/jobs/view/brand-engineer-at-kasparro-ai-4435213095?utm_source=chatgpt.com)', 'Yes—based on what Kasparro says it does, helping enterprise software brands become more visible in Perplexity answers is one of its core use cases.', 'According to the company, it focuses "
+    },
+    {
+      "response_id": "fa0dff8e-b96c-49b0-bcf3-0d410451bdf4",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "fab48e6e-a61b-43d2-ac30-40fcb0716d48",
+      "status": "successful",
+      "reason": null
+    },
+    {
+      "response_id": "ffdd37a9-6c48-4dff-8abd-c455bc9580b2",
+      "status": "skipped",
+      "reason": "not_selected_for_live_run: sample rule live-sample-v1"
+    }
+  ]
+}
