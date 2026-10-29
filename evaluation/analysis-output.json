@@ -1,0 +1,283 @@
+{
+  "generated_by": "tools/export_analysis_output.py",
+  "source": {
+    "database_file": "live-run.db",
+    "analysis_id": "f93000a1-5b97-4146-a72d-6fecb9f1f160"
+  },
+  "run": {
+    "status": "completed",
+    "execution_mode": "rules+hosted_groq",
+    "model_identifier": "literal-absence-rule-v1+openai/gpt-oss-120b",
+    "prompt_version": "visibility-classifier-v6",
+    "prompt_mapping_version": "prompt-categories-v1",
+    "responses": {
+      "eligible": 150,
+      "successful": 105,
+      "failed": 12,
+      "skipped": 33
+    },
+    "settled_by_literal_rule": 78,
+    "model_calls": {
+      "attempted": 39,
+      "valid": 27,
+      "failed": 12,
+      "quote_rejections": 11
+    },
+    "score_scope": "Visibility and endorsement only; not factual accuracy or business impact."
+  },
+  "literal_name_counts": {
+    "method": "Case-insensitive text match for 'Kasparro' in the archived answer; all responses.",
+    "total": {
+      "responses": 150,
+      "named": 72,
+      "absent": 78,
+      "successful": 105,
+      "failed": 12,
+      "skipped": 33
+    },
+    "by_engine": {
+      "aimode": {
+        "responses": 50,
+        "named": 25,
+        "absent": 25,
+        "successful": 33,
+        "failed": 5,
+        "skipped": 12
+      },
+      "gemini": {
+        "responses": 50,
+        "named": 22,
+        "absent": 28,
+        "successful": 38,
+        "failed": 3,
+        "skipped": 9
+      },
+      "chatgpt": {
+        "responses": 50,
+        "named": 25,
+        "absent": 25,
+        "successful": 34,
+        "failed": 4,
+        "skipped": 12
+      }
+    },
+    "by_prompt_branding": {
+      "unbranded": {
+        "responses": 60,
+        "named": 0,
+        "absent": 60,
+        "successful": 60,
+        "failed": 0,
+        "skipped": 0
+      },
+      "branded": {
+        "responses": 90,
+        "named": 72,
+        "absent": 18,
+        "successful": 45,
+        "failed": 12,
+        "skipped": 33
+      }
+    },
+    "by_engine_and_branding": {
+      "aimode|unbranded": {
+        "responses": 20,
+        "named": 0,
+        "absent": 20,
+        "successful": 20,
+        "failed": 0,
+        "skipped": 0
+      },
+      "gemini|branded": {
+        "responses": 30,
+        "named": 22,
+        "absent": 8,
+        "successful": 18,
+        "failed": 3,
+        "skipped": 9
+      },
+      "gemini|unbranded": {
+        "responses": 20,
+        "named": 0,
+        "absent": 20,
+        "successful": 20,
+        "failed": 0,
+        "skipped": 0
+      },
+      "chatgpt|branded": {
+        "responses": 30,
+        "named": 25,
+        "absent": 5,
+        "successful": 14,
+        "failed": 4,
+        "skipped": 12
+      },
+      "aimode|branded": {
+        "responses": 30,
+        "named": 25,
+        "absent": 5,
+        "successful": 13,
+        "failed": 5,
+        "skipped": 12
+      },
+      "chatgpt|unbranded": {
+        "responses": 20,
+        "named": 0,
+        "absent": 20,
+        "successful": 20,
+        "failed": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "model_classification": {
+    "method": "Model block: successful or failed results whose answer was not settled by the literal absence rule (those have a model attempt with execution mode 'rules').",
+    "execution_mode": "rules+hosted_groq",
+    "calls": {
+      "valid": 27,
+      "failed": 12,
+      "skipped": 33,
+      "quote_rejections": 11
+    },
+    "mentioned_only": 26,
+    "recommended": 1,
+    "negative": 11,
+    "notes": [
+      "12 of 39 model calls failed (11 were rejected because the quoted text did not match the answer exactly). A failed call is not brand absence.",
+      "Only 1 of 27 valid model results recommended Kasparro. This may mean the model under-detects recommendations; on the 8-case held-out check only 5 of 8 cases gave a valid answer, and the model found 0 recommendations among them."
+    ]
+  },
+  "diagnostics": [
+    {
+      "id": "unbranded-name-rate",
+      "title": "Kasparro is never named when the prompt does not name it",
+      "observed_pattern": "Across all engines, Kasparro was named in 0 of 60 answers to unbranded prompts (0%). By engine: ChatGPT 0 of 20; Gemini 0 of 20; Google AI Mode 0 of 20. Classification coverage: 60 valid, 0 failed, 0 skipped.",
+      "possible_explanation": "Hypothesis, not verified: when a prompt does not contain the brand name, the engines may have no reason to name it. Engine behaviour and the chosen prompts cannot be told apart from this archive alone.",
+      "evidence_needed": "Read the linked answers and list which brands each names instead. Repeat the same prompts with the name added, and compare name rates with their counts.\nOpening sentence of each linked answer. It shows what the engine said instead of naming Kasparro and proves absence only weakly; the exact count over the whole answer is what proves absence. The quotes prove the words are in the archive, not what they mean.\nResponse 0eb89a67-4548-4810-ba1c-1881a919823d: \"Enterprise software platforms can improve their visibility in ChatGPT answers, but there isn't a switch that guarantees inclusion.\"\nResponse 02c5ee8d-0ffe-4940-bf93-5793e7b01528: \"Fixing poor visibility in ChatGPT answers requires moving away from traditional keyword-based SEO and shifting toward **Generative Engine Optimization\" (start of the sentence)\nResponse 003061a9-6cdd-45a0-89c4-9a139020da4a: \"Yes, many low-effort AI \"brand platforms\" are little more than pre-packaged \"prompt hacks\" that become obsolete as AI models evolve, causing them to produce generic or inconsistent content over time.[](https://medium.com/@despindler/stop-asking-ai-for-answers-start-working-with-it-cc829f828ef8)\" (start of the sentence)",
+      "uncertainty": "high",
+      "evidence_response_ids": [
+        "0eb89a67-4548-4810-ba1c-1881a919823d",
+        "02c5ee8d-0ffe-4940-bf93-5793e7b01528",
+        "003061a9-6cdd-45a0-89c4-9a139020da4a"
+      ]
+    },
+    {
+      "id": "branded-engine-gap",
+      "title": "Gemini is furthest from the branded-prompt average",
+      "observed_pattern": "On branded prompts, Gemini named Kasparro in 22 of 30 answers (73%); all engines together named it in 72 of 90 (80%). Classification coverage for Gemini: 18 valid, 3 failed, 9 skipped.",
+      "possible_explanation": "Hypothesis, not verified: the engines may differ in how often they repeat a brand named in the prompt. With one archive and 30 branded answers for Gemini, a small gap can be chance.",
+      "evidence_needed": "Read the linked answers to see how each engine handles the named brand. Repeat the branded prompts and compare the gap with its counts.\nSentence from each linked Gemini answer that names Kasparro (or, if it does not, its opening sentence). The quotes prove the words are in the archive, not what they mean.\nResponse 00f943a2-5355-4205-a6e0-a3ce5de97c51: \"For small software companies operating on tight budgets and limited bandwidth, paying for dedicated AI recommendation tracking software is **rarely worth the\" (opening sentence; this answer does not name Kasparro; start of the sentence)\nResponse 136b8240-008c-46ff-b744-592c4d859e98: \"Kaspr is primarily available as a **self-serve platform**.\" (opening sentence; this answer does not name Kasparro)\nResponse 174932c6-7662-448c-8fb7-3217096c51ff: \"Yes, there are several robust alternatives to manual prompts for evaluating AI engine recommendations, tracking how brands or products appear in AI search engines, and managing testing at scale.\" (opening sentence; this answer does not name Kasparro)",
+      "uncertainty": "high",
+      "evidence_response_ids": [
+        "00f943a2-5355-4205-a6e0-a3ce5de97c51",
+        "136b8240-008c-46ff-b744-592c4d859e98",
+        "174932c6-7662-448c-8fb7-3217096c51ff"
+      ]
+    },
+    {
+      "id": "model-findings",
+      "title": "What the model found in the answers that name Kasparro",
+      "observed_pattern": "Of 27 valid model results, 26 mention Kasparro without recommending it and 1 recommend it. 11 describe it negatively (this overlaps the others). Coverage: 27 valid; 12 of 39 model calls failed; 33 answers were not sent.",
+      "possible_explanation": "Hypothesis, not verified: Only 1 of 27 valid model results recommended Kasparro. This may mean the model under-detects recommendations; on the 8-case held-out check only 5 of 8 cases gave a valid answer, and the model found 0 recommendations among them.",
+      "evidence_needed": "A reviewer reads the linked answers and marks mention, recommendation and negative wording without seeing the model label. Compare with the model's counts.",
+      "uncertainty": "high",
+      "evidence_response_ids": [
+        "71ec5309-af52-4071-af21-bd282ce41cce",
+        "0f217f49-ee02-44ea-853d-61fbcc7a9895",
+        "0f7ae466-5a77-42ce-9018-37f243f7d886"
+      ]
+    }
+  ],
+  "remedies": [
+    {
+      "id": "review-failures",
+      "priority": 1,
+      "title": "Fix the model quote-failure path",
+      "problem": "12 of 39 model calls failed, and 11 of those failed because the quoted text did not match the archived answer exactly. Each failed answer is missing from the model results. A failure is not brand absence.",
+      "evidence_response_ids": [
+        "0701bd6b-a5c3-4999-9c2a-51145cab15df",
+        "1b58c598-f4b9-43f1-b899-2a25d7ddd9cb",
+        "0eb89a67-4548-4810-ba1c-1881a919823d"
+      ],
+      "action": "Change the model reply so it returns sentence numbers instead of quoted text. The code then copies the exact sentence from the archived answer. Develop and test this only on the labelled development cases.",
+      "expected_benefit": "More named answers get a valid classification. It does not change what the model decides, and it makes no promise about ranking or visibility.",
+      "effort": "medium",
+      "uncertainty": "medium",
+      "validation_step": "With the owner's approval, re-run the 12 failed answers. Success is the number that now validate out of 12, and every excerpt is still found word for word in its answer."
+    },
+    {
+      "id": "unbranded-coverage",
+      "priority": 2,
+      "title": "Study the prompts where Kasparro is not named",
+      "problem": "Kasparro is named in 0 of 60 answers to unbranded prompts. It is never named there, so the archive cannot show what the engines say instead.",
+      "evidence_response_ids": [
+        "003061a9-6cdd-45a0-89c4-9a139020da4a",
+        "016fc85b-120b-46fe-958a-53724ad55363",
+        "02c5ee8d-0ffe-4940-bf93-5793e7b01528"
+      ],
+      "action": "An analyst reads the linked answers and lists which brands they name instead. Then a larger, reviewed set of unbranded prompts is archived with the same engines.",
+      "expected_benefit": "Shows whether the gap comes from prompt wording or from the engines. It makes no promise that any change will improve ranking.",
+      "effort": "medium",
+      "uncertainty": "high",
+      "validation_step": "On a new archived sample, report how many answers to unbranded prompts name Kasparro, out of how many, and compare with 0 of 60 today."
+    },
+    {
+      "id": "review-recommendations",
+      "priority": 3,
+      "title": "Check recommendation counts by hand",
+      "problem": "Only 1 of 27 valid model results recommended Kasparro. The model may be missing recommendations, so this count should not be trusted yet.",
+      "evidence_response_ids": [
+        "71ec5309-af52-4071-af21-bd282ce41cce",
+        "0f217f49-ee02-44ea-853d-61fbcc7a9895",
+        "0f7ae466-5a77-42ce-9018-37f243f7d886"
+      ],
+      "action": "A reviewer reads all 27 valid model-classified answers and marks which ones recommend Kasparro, without seeing the model label first.",
+      "expected_benefit": "Shows whether the recommendation count is too low before anyone relies on it.",
+      "effort": "low",
+      "uncertainty": "medium",
+      "validation_step": "Count the answers the reviewer marks as recommendations and compare with the model's 1. Report the disagreements out of 27."
+    }
+  ],
+  "evidence_check": {
+    "checker": "tools/check_report_evidence.py",
+    "problems": []
+  },
+  "known_issues": [
+    {
+      "id": 1,
+      "issue": "Diagnostic 2 evidence is misleading on the live run. Prompts 026-030 are labelled 'branded' in the frozen prompt-categories-v1 mapping, but their text does not name Kasparro, so Gemini's 22 of 30 is really 22 of 25. Two of the three answers cited in diagnostic 2 show nothing about the gap."
+    },
+    {
+      "id": 2,
+      "issue": "The quote cutter can drop the brand name from a quote that is labelled as naming it. Not hit on the live data."
+    },
+    {
+      "id": 3,
+      "issue": "tools/check_report_evidence.py accepts an empty quote."
+    },
+    {
+      "id": 4,
+      "issue": "Remedy 2 says the archive cannot show what the engines say instead of Kasparro, but diagnostic 1 quotes the opening sentence of those answers."
+    },
+    {
+      "id": 5,
+      "issue": "Diagnostic 3's title says 'What the model found...', which is wrong for a plain stub run, where no model ran."
+    },
+    {
+      "id": 6,
+      "issue": "The word 'valid' in the coverage lines covers both answers settled by the literal rule and answers classified by the model."
+    },
+    {
+      "id": 7,
+      "issue": "Several tests are weak (see the reviewer lines in STATUS.md)."
+    },
+    {
+      "id": 8,
+      "issue": "The freeze tools read the deleted classification.py and no longer run. tools/benchmark_model.py is not deleted."
+    }
+  ],
+  "active_time": {
+    "hours": null,
+    "note": "owner to supply real hours"
+  }
+}
