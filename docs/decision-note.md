@@ -68,7 +68,8 @@ Unique-link counting is not built either. The model was not run on all 150 answe
 
 ## Questions to answer before release
 
-- Keep the frozen prompt labels and change finding 2, or approve a new mapping?
+- Should a new prompt mapping (v2) replace the frozen labels? For now the frozen labels stay, and finding 2 cites
+  only prompts that name Kasparro.
 - Does a person reading the 27 valid answers find more recommendations than the model did?
 - Is a new freeze with sentence numbers worth the cost?
 
