@@ -30,7 +30,7 @@ LIVE_ANALYSIS_ID = "f93000a1-5b97-4146-a72d-6fecb9f1f160"
 OUTPUT_PATH = ROOT / "evaluation" / "analysis-output.json"
 
 # Open problems that remain. Earlier review items (D2 evidence, quote cutter, empty quote, remedy 2,
-# D3 title, "valid" wording, weak tests) are fixed in code; see STATUS.md.
+# D3 title, "valid" wording, weak tests) are fixed in code.
 KNOWN_ISSUES = [
     {
         "id": 1,

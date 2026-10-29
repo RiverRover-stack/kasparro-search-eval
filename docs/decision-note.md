@@ -1,6 +1,6 @@
 # Decision note
 
-Numbers below come from `STATUS.md`, the files in `evaluation/`, and `evaluation/analysis-output.json`
+Numbers below come from the files in `evaluation/`, and `evaluation/analysis-output.json`
 (made from the one live run). Nothing here is a claim about how good the model is in general.
 
 ## Scoring and aggregation

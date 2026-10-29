@@ -1,7 +1,7 @@
 # Implementation plan
 
 Last updated 29 October 2026. What the system does today: [`SPEC.md`](SPEC.md). Rules for working
-here: [`CLAUDE.md`](CLAUDE.md). Live progress: [`STATUS.md`](STATUS.md).
+here: [`CLAUDE.md`](CLAUDE.md).
 
 **Goal:** a correct, complete, runnable flow that meets `Assignment.pdf`, with code a new contributor
 can follow. The assignment caps active work at six hours. Optional extras (dashboard, Docker,
@@ -42,7 +42,7 @@ next step without approval.
 Committed the branded/unbranded aggregates and the computed-summary guard (`27d132b`, `3570834`).
 
 ### Step 1: Documentation. Done
-`CLAUDE.md`, `SPEC.md`, this plan, `STATUS.md`; `AGENTS.md` points to `CLAUDE.md`.
+`CLAUDE.md`, `SPEC.md`, this plan; `AGENTS.md` points to `CLAUDE.md`.
 
 ### Step 2: Make the code easy to change
 Moves must not change behaviour; all tests stay green after each. 2b is the one deliberate exception.
