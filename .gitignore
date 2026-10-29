@@ -9,3 +9,14 @@ docs/PROJECT.md
 docs/AI_CONTEXT.md
 docs/HANDOFF_PROMPT.md
 journey/
+
+# supplied assignment pack (kept local, not published)
+data/
+provenance/
+reference/
+schemas/
+fixtures/
+PACK_MANIFEST.json
+START_HERE.txt
+Assignment.pdf
+Assignment.docx

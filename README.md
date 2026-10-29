@@ -102,7 +102,11 @@ final verdict.
 
 ## Try it
 
-You need Python 3.10 or newer. In PowerShell, from this folder:
+You need Python 3.10 or newer, and the supplied assignment pack (`data/`, `provenance/`, `reference/`,
+`schemas/`, `fixtures/`, `PACK_MANIFEST.json`). The pack is not published in this repository: copy it into
+this folder first. `py -3 tools\check_pack.py` tells you if anything is missing or changed.
+
+In PowerShell, from this folder:
 
 ```powershell
 py -3 -m venv .venv
