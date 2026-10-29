@@ -1,8 +1,7 @@
 # Implementation plan
 
 Last updated 29 October 2026. What the system does today: [`SPEC.md`](SPEC.md). Rules for working
-here: [`CLAUDE.md`](CLAUDE.md). Live progress: [`STATUS.md`](STATUS.md). How we got here:
-[`journey/`](journey/).
+here: [`CLAUDE.md`](CLAUDE.md). Live progress: [`STATUS.md`](STATUS.md).
 
 **Goal:** a correct, complete, runnable flow that meets `Assignment.pdf`, with code a new contributor
 can follow. The assignment caps active work at six hours. Optional extras (dashboard, Docker,
@@ -124,7 +123,6 @@ Done when: one command regenerates the report and the new tests pass.
 - [x] `evaluation/analysis-output.json`: scores and coverage, the 3 diagnostics, the 3 remedies, active time. Built by `tools/export_analysis_output.py`; `active_time` is null until the owner supplies hours.
 - [x] `docs/decision-note.md` (about one page): scoring and aggregation, review design, alternatives,
   top remedy, the failure and fix, biggest risk, omissions, questions before release, AI assistance.
-- [ ] Active-time log in `journey/dev-notes.md`. The owner supplies real hours; nothing is guessed.
 
 ## Deliberately out of scope
 

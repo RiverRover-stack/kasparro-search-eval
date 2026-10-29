@@ -95,7 +95,6 @@ final verdict.
 - Nothing is running.
 
 **Not done yet**
-- The real active hours. Only the owner can fill them in (`journey/dev-notes.md`). The slots are empty.
 - Known problems that remain are listed in `evaluation/analysis-output.json` under `known_issues`.
   The second finding is the most important: it is misleading on the live run (see `docs/decision-note.md`).
 - Counting unique links in answers.
@@ -215,7 +214,6 @@ test results.
 - [`SPEC.md`](SPEC.md): exactly what the system does, in plain language.
 - [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md): what is finished and what is left.
 - [`docs/adr/`](docs/adr/): the reasons behind the main design choices.
-- [`journey/`](journey/): dated notes on how the project developed, including what went wrong.
 - [`docs/decision-note.md`](docs/decision-note.md): the main choices, the biggest risks and what was left out.
 - [`evaluation/analysis-output.json`](evaluation/analysis-output.json): the live-run numbers, findings and open problems.
 - [`evaluation/comparison-report.md`](evaluation/comparison-report.md): the full model-versus-rule results.
