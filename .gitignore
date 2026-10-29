@@ -21,3 +21,27 @@ START_HERE.txt
 Assignment.pdf
 Assignment.docx
 STATUS.md
+
+# local tooling and build output
+.claude/
+*.egg-info/
+build/
+dist/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# local databases, logs and env variants (.env.example stays tracked)
+*.db
+*.db-*
+*.sqlite3
+*.log
+.env.*
+!.env.example
+
+# editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
