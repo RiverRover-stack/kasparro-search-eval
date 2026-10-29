@@ -93,6 +93,8 @@ class AnalysisView(BaseModel):
     prompt_version: str
     aggregate: AnalysisAggregateView
     by_engine: dict[str, AnalysisAggregateView]
+    by_prompt_branding: dict[str, AnalysisAggregateView]
+    prompt_mapping_version: str
     shared_prompt_comparison: SharedPromptComparisonView
     results: list[AnalysisResultView]
 

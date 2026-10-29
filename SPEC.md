@@ -72,6 +72,10 @@ contract-valid classifications keyed by response ID; a missing replay item becom
 not absence. Local execution uses the bounded adapter. `GET /analyses/{id}` returns the persisted run,
 per-response terminal states, separate classification fields, citation presence, denominated totals,
 per-engine aggregates, and comparisons restricted to prompts successfully analyzed by every engine.
+The response also includes denominated branded, unbranded, and unmapped prompt aggregates using
+`prompt-categories-v1` for the supplied source run. Unrecognized prompts or runs remain unmapped.
+Prompt branding describes the question, not brand presence in the answer. New report summaries
+include this breakdown; existing frozen report versions remain unchanged.
 
 Every eligible response is `successful`, `failed`, or `skipped` with a reason. Oversized inputs are
 skipped before adapter invocation and are never truncated. Attempts store duration, execution mode,

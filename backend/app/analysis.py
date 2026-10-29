@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import json
+from pathlib import Path
 from threading import Lock
 from uuid import uuid4
 
@@ -34,6 +36,29 @@ class AnalysisBusyError(RuntimeError):
 
 
 _ANALYSIS_LOCK = Lock()
+_CATEGORY_MAPPING = Path(__file__).resolve().parents[2] / "evaluation" / "prompt-categories-v1.json"
+_MAPPED_SOURCE_RUN = "4a4b71d9-9b0d-4497-85f1-7db5c4e21472"
+
+
+def _prompt_branding_groups(
+    records: list[ResponseClassificationRecord], source_run_id: str
+) -> tuple[str, dict[str, AnalysisAggregateView]]:
+    mapping = json.loads(_CATEGORY_MAPPING.read_text(encoding="utf-8"))
+    labels: dict[str, str] = {}
+    if source_run_id == _MAPPED_SOURCE_RUN:
+        for rule in mapping["rules"]:
+            start, end = (int(value) for value in rule["prompt_numbers"].split("-"))
+            for number in range(start, end + 1):
+                prompt_id = f"kasparro:ai_shortlisting:{number:03d}"
+                if prompt_id in labels:
+                    raise ValueError(f"Duplicate prompt category for {prompt_id}")
+                labels[prompt_id] = "branded" if rule["branded"] else "unbranded"
+    grouped: dict[str, list[ResponseClassificationRecord]] = {
+        "branded": [], "unbranded": [], "unmapped": []
+    }
+    for record in records:
+        grouped[labels.get(record.prompt_id, "unmapped")].append(record)
+    return mapping["mapping_version"], {name: _aggregate(items) for name, items in grouped.items()}
 
 
 def execute_analysis(
@@ -214,6 +239,7 @@ def get_analysis(session: Session, analysis_id: str) -> AnalysisView:
     by_engine: dict[str, AnalysisAggregateView] = {}
     for engine in sorted({record.engine for record in records}):
         by_engine[engine] = _aggregate([record for record in records if record.engine == engine])
+    mapping_version, by_prompt_branding = _prompt_branding_groups(records, run.dataset.source_run_id)
     result_views = [
         AnalysisResultView(
             response_id=record.response_id,
@@ -236,6 +262,8 @@ def get_analysis(session: Session, analysis_id: str) -> AnalysisView:
         prompt_version=run.prompt_version,
         aggregate=_aggregate(records),
         by_engine=by_engine,
+        by_prompt_branding=by_prompt_branding,
+        prompt_mapping_version=mapping_version,
         shared_prompt_comparison=_shared_prompt_comparison(records),
         results=result_views,
     )

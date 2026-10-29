@@ -183,6 +183,11 @@ def _initial_content(session: Session, analysis_id: str) -> ReportContent:
                 engine: aggregate.model_dump(mode="json")
                 for engine, aggregate in analysis.by_engine.items()
             },
+            "by_prompt_branding": {
+                group: aggregate.model_dump(mode="json")
+                for group, aggregate in analysis.by_prompt_branding.items()
+            },
+            "prompt_mapping_version": analysis.prompt_mapping_version,
             "shared_prompt_comparison": analysis.shared_prompt_comparison.model_dump(mode="json"),
             "score_scope": "Visibility and endorsement only; not factual accuracy or business impact.",
         },

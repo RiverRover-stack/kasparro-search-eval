@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, sessionmaker
 
-from backend.app.analysis import execute_analysis, get_analysis
+from backend.app.analysis import _prompt_branding_groups, execute_analysis, get_analysis
 from backend.app.classification import ClassificationOutcome, ControlledStubClassifier, ModelAttempt
 from backend.app.importer import import_pack
 from backend.app.models import ModelAttemptRecord, ResponseClassificationRecord
@@ -16,6 +16,16 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_unknown_run_does_not_inherit_frozen_prompt_categories() -> None:
+    record = ResponseClassificationRecord(
+        prompt_id="kasparro:ai_shortlisting:001", status="failed", visibility_score=None
+    )
+    _, groups = _prompt_branding_groups([record], "another-run")
+    assert groups["unmapped"].failed == 1
+    assert groups["unmapped"].average_visibility_score is None
+    assert groups["branded"].eligible == 0
 
 
 def test_stub_analysis_persists_terminal_results_and_aggregates(
@@ -31,6 +41,11 @@ def test_stub_analysis_persists_terminal_results_and_aggregates(
         assert fetched.aggregate.successful == 150
         assert fetched.aggregate.failed == 0
         assert fetched.aggregate.skipped == 0
+        assert fetched.prompt_mapping_version == "prompt-categories-v1"
+        assert fetched.by_prompt_branding["branded"].eligible == 90
+        assert fetched.by_prompt_branding["unbranded"].eligible == 60
+        assert fetched.by_prompt_branding["unmapped"].eligible == 0
+        assert fetched.by_prompt_branding["unmapped"].average_visibility_score is None
         assert fetched.shared_prompt_comparison.shared_successful_prompts == 50
         assert session.scalar(select(func.count()).select_from(ModelAttemptRecord)) == 150
         assert all(
@@ -59,6 +74,8 @@ def test_partial_failure_and_oversized_input_keep_valid_results(
     assert analysis.aggregate.failed == 1
     assert analysis.aggregate.skipped >= 1
     assert analysis.aggregate.eligible == 150
+    assert sum(group.failed for group in analysis.by_prompt_branding.values()) == 1
+    assert sum(group.skipped for group in analysis.by_prompt_branding.values()) == analysis.aggregate.skipped
 
 
 def test_analysis_endpoint_functions_support_stub_and_persisted_get(
