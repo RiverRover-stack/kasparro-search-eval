@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import time
 import urllib.error
 import urllib.request
 
-from .adapters import ClassificationOutcome, ModelAttempt
+from .adapters import ClassificationOutcome, ModelAttempt, ProviderQuotaExhausted
 from .contract import ClassificationResult, normalize_inactive_evidence
 from .prompt import (
     PROMPT_VERSION,
@@ -15,6 +16,31 @@ from .prompt import (
     candidate_excerpts,
     strict_classification_schema,
 )
+
+
+def build_payload(answer_text: str, model: str, max_output_tokens: int) -> dict:
+    return {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": SYSTEM_INSTRUCTION},
+            {
+                "role": "user",
+                "content": f"ARCHIVED ANSWER START\n{answer_text}\nARCHIVED ANSWER END",
+            },
+        ],
+        "temperature": 0,
+        "seed": 17,
+        "reasoning_effort": "low",
+        "max_completion_tokens": max_output_tokens,
+        "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "kasparro_visibility_classification",
+                "strict": True,
+                "schema": strict_classification_schema(candidate_excerpts(answer_text)),
+            },
+        },
+    }
 
 
 class GroqClassifier:
@@ -31,6 +57,7 @@ class GroqClassifier:
         max_output_tokens: int = 2048,
         max_input_chars: int = 20000,
         rate_limit_wait_cap_seconds: float = 60.0,
+        tokens_per_minute: int | None = None,
     ) -> None:
         self.api_key = api_key or os.getenv("GROQ_API_KEY")
         if not self.api_key:
@@ -43,34 +70,26 @@ class GroqClassifier:
         self.max_input_chars = max_input_chars
         self.rate_limit_wait_cap_seconds = rate_limit_wait_cap_seconds
         self.model_identifier = model
+        self.tokens_per_minute = tokens_per_minute
+        self._next_allowed = 0.0
+
+    def _pace(self, payload_bytes: int) -> None:
+        if self.tokens_per_minute is None:
+            return
+        rate = 0.9 * self.tokens_per_minute / 60
+        cost = math.ceil(payload_bytes / 3.4) + self.max_output_tokens
+        now = time.monotonic()
+        if now < self._next_allowed:
+            time.sleep(self._next_allowed - now)
+            now = self._next_allowed
+        self._next_allowed = now + cost / rate
 
     def classify(self, answer_text: str, response_id: str | None = None) -> ClassificationOutcome:
         if len(answer_text) > self.max_input_chars:
             raise ValueError(
                 f"Input has {len(answer_text)} characters; limit is {self.max_input_chars}"
             )
-        payload = {
-            "model": self.model,
-            "messages": [
-                {"role": "system", "content": SYSTEM_INSTRUCTION},
-                {
-                    "role": "user",
-                    "content": f"ARCHIVED ANSWER START\n{answer_text}\nARCHIVED ANSWER END",
-                },
-            ],
-            "temperature": 0,
-            "seed": 17,
-            "reasoning_effort": "low",
-            "max_completion_tokens": self.max_output_tokens,
-            "response_format": {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": "kasparro_visibility_classification",
-                    "strict": True,
-                    "schema": strict_classification_schema(candidate_excerpts(answer_text)),
-                },
-            },
-        }
+        payload = build_payload(answer_text, self.model, self.max_output_tokens)
         attempts: list[ModelAttempt] = []
         for attempt_number in range(1, self.max_attempts + 1):
             started = time.monotonic()
@@ -79,9 +98,11 @@ class GroqClassifier:
             provider_metadata: dict[str, object] = {}
             retryable = True
             try:
+                body = json.dumps(payload).encode("utf-8")
+                self._pace(len(body))
                 request = urllib.request.Request(
                     self.endpoint,
-                    data=json.dumps(payload).encode("utf-8"),
+                    data=body,
                     headers={
                         "Authorization": f"Bearer {self.api_key}",
                         "Accept": "application/json",
@@ -146,11 +167,18 @@ class GroqClassifier:
                             retry_after_seconds = None
                 summary = provider_error.get("message") or exc.reason or "request rejected"
                 if retry_after_seconds is None:
-                    match = re.search(r"try again in ([0-9.]+)s", str(summary), re.IGNORECASE)
+                    match = re.search(
+                        r"try again in (?:([0-9]+)m)?([0-9.]+)s", str(summary), re.IGNORECASE
+                    )
                     if match:
-                        retry_after_seconds = float(match.group(1))
+                        retry_after_seconds = float(match.group(2)) + 60 * int(match.group(1) or 0)
                 if retry_after_seconds is not None:
                     provider_metadata["retry_after_seconds"] = retry_after_seconds
+                    if exc.code == 429 and retry_after_seconds > self.rate_limit_wait_cap_seconds:
+                        raise ProviderQuotaExhausted(
+                            f"Groq HTTP 429: {summary} (retry after {retry_after_seconds:g}s "
+                            f"exceeds the {self.rate_limit_wait_cap_seconds:g}s wait cap)"
+                        ) from None
                 validation_error = f"Groq HTTP {exc.code}: {summary}"
                 retryable = exc.code in {408, 409, 422, 429, 498, 500, 502, 503, 504}
                 if provider_error.get("code") == "json_validate_failed":
