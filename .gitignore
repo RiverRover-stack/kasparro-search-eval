@@ -45,3 +45,4 @@ htmlcov/
 .idea/
 .DS_Store
 Thumbs.db
+IMPLEMENTATION_PLAN.md

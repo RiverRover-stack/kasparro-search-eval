@@ -1,8 +1,7 @@
 # Kasparro Visibility Backend: what it does
 
 Last updated 29 October 2026. This describes behaviour that exists today, and marks anything that
-does not exist yet. The work still to do is in [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md).
-Contributor rules are in [`CLAUDE.md`](CLAUDE.md).
+does not exist yet. Contributor rules are in [`CLAUDE.md`](CLAUDE.md).
 
 ## 1. The product in one paragraph
 

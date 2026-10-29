@@ -275,7 +275,6 @@ test results.
 ## Learn more
 
 - [`SPEC.md`](SPEC.md): exactly what the system does, in plain language.
-- [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md): what is finished and what is left.
 - [`docs/adr/`](docs/adr/): the reasons behind the main design choices.
 - [`docs/decision-note.md`](docs/decision-note.md): the main choices, the biggest risks and what was left out.
 - [`evaluation/analysis-output.json`](evaluation/analysis-output.json): the live-run numbers, findings and open problems.

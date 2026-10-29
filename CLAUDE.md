@@ -37,7 +37,7 @@ Setup details and request examples: `docs/onboarding.md` (README is being rewrit
 |---|---|---|
 | Reader-facing | `README.md` | People viewing the project. Very simple words, short sentences, honest status. Never claim unbuilt work. |
 | Owner's private reference | `docs/PROJECT.md`, `docs/AI_CONTEXT.md` (both gitignored) | The owner, and a paste-in brief for other AIs. Never track them. |
-| Agent and contributor | `CLAUDE.md`, `SPEC.md`, `IMPLEMENTATION_PLAN.md`, `docs/adr/` | Precise, technical. |
+| Agent and contributor | `CLAUDE.md`, `SPEC.md`, `docs/adr/` | Precise, technical. |
 
 After each milestone: update `STATUS.md` always (gitignored, local progress log); `README.md` if status or results changed;
 `docs/PROJECT.md` and `docs/AI_CONTEXT.md` if the project's state changed.
@@ -57,7 +57,8 @@ After each milestone: update `STATUS.md` always (gitignored, local progress log)
 | `tests/` | pytest; service-level tests with in-memory SQLite (`conftest.py`) |
 | `tools/` | `check_pack.py` plus benchmark and freeze scripts |
 | `evaluation/` | Labelled cases and frozen results (see invariants) |
-| `SPEC.md` / `IMPLEMENTATION_PLAN.md` | What it does / what is left |
+| `SPEC.md` | What it does |
+| `IMPLEMENTATION_PLAN.md` (gitignored, local only) | What is left; not part of the repository |
 | `STATUS.md` (gitignored, local only) | Current progress log; not part of the repository |
 | `docs/adr/` | Decisions |
 | `journey/` (gitignored, local only) | Measured development history; not part of the repository |
