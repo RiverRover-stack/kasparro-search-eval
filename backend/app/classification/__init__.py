@@ -2,10 +2,13 @@ import time  # noqa: F401  (tests monkeypatch backend.app.classification.time.sl
 import urllib.request  # noqa: F401  (tests monkeypatch backend.app.classification.urllib.request.urlopen)
 
 from .adapters import (
+    AbsenceRuleClassifier,
     ClassificationOutcome,
     Classifier,
     ControlledStubClassifier,
+    LiteralAbsenceRouter,
     ModelAttempt,
+    ProviderQuotaExhausted,
     ReplayClassifier,
 )
 from .contract import (
@@ -26,6 +29,7 @@ from .prompt import (
 )
 
 __all__ = [
+    "AbsenceRuleClassifier",
     "CLASSIFICATION_CONTRACT_VERSION",
     "PROMPT_VERSION",
     "SYSTEM_INSTRUCTION",
@@ -35,8 +39,10 @@ __all__ = [
     "ControlledStubClassifier",
     "EvidenceKind",
     "GroqClassifier",
+    "LiteralAbsenceRouter",
     "ModelAttempt",
     "OllamaClassifier",
+    "ProviderQuotaExhausted",
     "ReplayClassifier",
     "SupportingExcerpt",
     "candidate_excerpts",

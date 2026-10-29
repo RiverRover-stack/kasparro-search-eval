@@ -26,6 +26,10 @@ class ClassificationOutcome:
     execution_mode: str = "local_ollama"
 
 
+class ProviderQuotaExhausted(RuntimeError):
+    """The provider's quota is spent for longer than a run should wait."""
+
+
 class Classifier(Protocol):
     model_identifier: str
     prompt_version: str
@@ -113,3 +117,62 @@ class ReplayClassifier:
             model_identifier=self.model_identifier,
             execution_mode=self.execution_mode,
         )
+
+
+class AbsenceRuleClassifier:
+    """Classifies answers in which the brand name literally does not occur."""
+
+    model_identifier = "literal-absence-rule-v1"
+    prompt_version = PROMPT_VERSION
+    execution_mode = "rules"
+
+    def classify(self, answer_text: str, response_id: str | None = None) -> ClassificationOutcome:
+        if "kasparro" in answer_text.casefold():
+            attempt = ModelAttempt(
+                1, 0, None, "rule_not_applicable: brand name occurs in the answer"
+            )
+            return ClassificationOutcome(
+                result=None,
+                attempts=[attempt],
+                model_identifier=self.model_identifier,
+                execution_mode=self.execution_mode,
+            )
+        result = ClassificationResult.model_validate(
+            {
+                "contract_version": CLASSIFICATION_CONTRACT_VERSION,
+                "brand_mentioned": False,
+                "recommended": False,
+                "negative_characterization": False,
+                "competitors": [],
+                "observable_position": None,
+                "supporting_excerpts": [],
+                "uncertainty": "low",
+                "uncertainty_reason": (
+                    "Brand name does not occur in the archived answer (literal rule); "
+                    "competitors not extracted."
+                ),
+            }
+        )
+        result.verify_excerpts(answer_text)
+        return ClassificationOutcome(
+            result=result,
+            attempts=[ModelAttempt(1, 0, result.model_dump_json(), None)],
+            model_identifier=self.model_identifier,
+            execution_mode=self.execution_mode,
+        )
+
+
+class LiteralAbsenceRouter:
+    """Sends literal-absent answers to the rule and all others to the live classifier."""
+
+    def __init__(self, live: Classifier) -> None:
+        self.live = live
+        self.rule = AbsenceRuleClassifier()
+        self.execution_mode = f"rules+{live.execution_mode}"
+        self.model_identifier = f"{AbsenceRuleClassifier.model_identifier}+{live.model_identifier}"
+        self.prompt_version = live.prompt_version
+
+    def classify(self, answer_text: str, response_id: str | None = None) -> ClassificationOutcome:
+        if "kasparro" not in answer_text.casefold():
+            return self.rule.classify(answer_text, response_id)
+        return self.live.classify(answer_text, response_id)
