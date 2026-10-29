@@ -8,3 +8,6 @@
 /reference/** -text
 /schemas/** -text
 /tools/check_pack.py -text
+
+# generated reports must never get line-ending conversion
+*.pdf binary
