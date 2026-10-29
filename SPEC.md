@@ -107,6 +107,11 @@ eligible, successful, failed, skipped. A group with no successful answers has no
 25 score 0, 10 score 25 and 5 score 100. Average = (0×25 + 25×10 + 100×5) / 40 = 18.75. The report
 shows "18.75 from 40 of 50 answers; 6 failed, 4 skipped", never just "18.75".
 
+**A mixed run's overall average is not Kasparro's visibility.** In the sample run, all 78 answers without
+the brand name are scored 0 by the rule, but only 27 of the 72 mention answers have a model result. So
+absence is over-represented in the average. Reports must state the exact absence count over all 150
+separately from the model's results on the sampled mention answers, with the coverage beside each.
+
 **Comparing engines** uses only prompts that were successfully analysed for *every* engine, so each
 engine is judged on the same questions.
 

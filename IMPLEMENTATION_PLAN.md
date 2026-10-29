@@ -66,7 +66,8 @@ answers without the brand name, Groq for a fixed sample of 39 of the 72 mention 
 with a reason. Budget: about 98K input tokens, at most about 178K even if the daily cap charges the reserved
 output, against a 200K/day limit; about 25 minutes paced. 3a and 3b are done; 3c needs your approval before
 anything is sent, and uses a fresh database (`--database-url sqlite:///backend/live-run.db`).
-Status: **3a done. 3b done and committed. 3c not started.** The checkboxes below are the original
+Status: **3a, 3b and 3c done.** The owner ran it: 150 accounted for (105 successful, 12 failed, 33 skipped);
+Groq 27 valid and 12 failed out of 39; result in `evaluation/live-run-groq-sample.json`. The checkboxes below are the original
 wording; read them with this scope.
 - [ ] **3a. Check limits, send nothing in bulk.** Read Groq's published limits for
   `openai/gpt-oss-120b` (requests and tokens per minute and per day, context size, max output).
@@ -93,6 +94,11 @@ It does not answer "where does Kasparro win or lose". The step would group resul
 branded/unbranded prompt, choose the three clearest wins or losses, attach stored excerpts and response IDs,
 and derive the three remedies from them. It changes report content and needs the real live-run results, so it starts after Step 3c finishes, and the
 design is shown to you before any code is written.
+
+Requirements added by the live run: the report must not use the blended average (78 absent answers are
+all in it, but only 27 of 72 mention answers). It must state the exact absence count over all 150, show
+the model's results on the sampled mention answers separately, and put coverage (valid, failed, skipped)
+beside each number. Only 1 recommendation was found in 27, so say the model may under-detect them.
 
 The original wording of Step 4 follows.
 - [ ] **4a.** Rule baseline classifier (brand text present; recommendation and negative words near it).
