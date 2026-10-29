@@ -129,6 +129,7 @@ class ReportRemedy(BaseModel):
     id: str = Field(min_length=1)
     priority: int = Field(ge=1, le=3)
     title: str = Field(min_length=1)
+    problem: str | None = None  # absent in report versions created before Step 4b
     evidence_response_ids: list[str] = Field(min_length=1)
     action: str = Field(min_length=1)
     expected_benefit: str = Field(min_length=1)

@@ -7,22 +7,23 @@ from uuid import uuid4
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from .analysis import get_analysis
+from .analysis import get_analysis, prompt_branding_labels
+from .findings import build_findings
 from .models import (
     AnalysisRun,
     AuditEvent,
+    ModelAttemptRecord,
     Report,
     ReportEvidenceLink,
     ReportVersion,
     ResponseClassificationRecord,
+    ResponseRecord,
     ReviewDecision,
     utc_now,
 )
 from .schemas import (
     ReportContent,
-    ReportDiagnostic,
     ReportExportView,
-    ReportRemedy,
     ReportVersionView,
     ReportView,
     ReviewDecisionView,
@@ -82,113 +83,37 @@ def _initial_content(session: Session, analysis_id: str) -> ReportContent:
     records = _result_records(session, analysis_id)
     if not records:
         raise ReportServiceError(409, "analysis_has_no_results", "Analysis has no persisted results")
-    all_ids = [record.response_id for record in records]
-    successful_ids = [record.response_id for record in records if record.status == "successful"]
-    evidence_ids = (successful_ids or all_ids)[:3]
-    coverage_ids = all_ids[:3]
-    average = analysis.aggregate.average_visibility_score
-    average_text = "no score because no response was successfully classified"
-    if average is not None:
-        average_text = f"an average visibility score of {average:.2f} among successful responses"
-    shared = analysis.shared_prompt_comparison.shared_successful_prompts
-
-    diagnostics = [
-        ReportDiagnostic(
-            id="coverage",
-            title="Classification coverage",
-            observed_pattern=(
-                f"{analysis.aggregate.successful} of {analysis.aggregate.eligible} eligible responses "
-                f"were successfully classified; {analysis.aggregate.failed} failed and "
-                f"{analysis.aggregate.skipped} were skipped."
-            ),
-            possible_explanation=(
-                "Provider and validation records may explain failures; this is a hypothesis until "
-                "the linked attempts are reviewed."
-            ),
-            evidence_needed="Review persisted attempt errors for every failed or skipped response.",
-            uncertainty="low",
-            evidence_response_ids=coverage_ids,
-        ),
-        ReportDiagnostic(
-            id="visibility",
-            title="Observed visibility score",
-            observed_pattern=f"The analysis produced {average_text}.",
-            possible_explanation=(
-                "Differences may reflect archived answer wording, but no causal explanation has "
-                "been verified from these classifications alone."
-            ),
-            evidence_needed="Compare the linked classifications with their exact archived excerpts.",
-            uncertainty="medium",
-            evidence_response_ids=evidence_ids,
-        ),
-        ReportDiagnostic(
-            id="engine-comparison",
-            title="Shared-prompt engine comparison",
-            observed_pattern=(
-                f"Engine averages are comparable on {shared} prompts with successful results for "
-                "every engine."
-            ),
-            possible_explanation=(
-                "Any engine difference is descriptive only; prompt sampling and provider behavior "
-                "remain possible explanations rather than verified causes."
-            ),
-            evidence_needed="Inspect shared prompt classifications and repeat sampling before causal claims.",
-            uncertainty="high",
-            evidence_response_ids=evidence_ids,
-        ),
-    ]
-    remedies = [
-        ReportRemedy(
-            id="review-failures",
-            priority=1,
-            title="Review failed classifications",
-            evidence_response_ids=coverage_ids,
-            action="Inspect attempt diagnostics and resolve only reproducible adapter or validation defects.",
-            expected_benefit="Improves measurable classification coverage without treating failures as absence.",
-            effort="medium",
-            uncertainty="low",
-            validation_step="Rerun an approved development case and compare terminal-status accounting.",
-        ),
-        ReportRemedy(
-            id="verify-evidence",
-            priority=2,
-            title="Verify evidence-linked observations",
-            evidence_response_ids=evidence_ids,
-            action="Review exact excerpts for mention, recommendation, and negative characterization.",
-            expected_benefit="Reduces the risk of presenting traceable but semantically wrong claims.",
-            effort="medium",
-            uncertainty="medium",
-            validation_step="Record reviewer agreement or a correction reason for each sampled claim.",
-        ),
-        ReportRemedy(
-            id="repeat-sampling",
-            priority=3,
-            title="Repeat comparable sampling",
-            evidence_response_ids=evidence_ids,
-            action="Collect a new, versioned sample using the same prompts and provider settings.",
-            expected_benefit="Tests whether observed engine differences persist beyond this archive.",
-            effort="high",
-            uncertainty="high",
-            validation_step="Compare coverage and shared-prompt averages with confidence intervals.",
-        ),
-    ]
+    answers = {
+        response_id: answer_text
+        for response_id, answer_text in session.execute(
+            select(ResponseRecord.id, ResponseRecord.answer_text).where(
+                ResponseRecord.id.in_([record.response_id for record in records])
+            )
+        )
+    }
+    rule_response_ids = set(
+        session.scalars(
+            select(ModelAttemptRecord.response_id).where(
+                ModelAttemptRecord.analysis_run_id == analysis_id,
+                ModelAttemptRecord.execution_mode == "rules",
+            )
+        )
+    )
+    _, labels = prompt_branding_labels(session.get(AnalysisRun, analysis_id).dataset.source_run_id)
+    try:
+        blocks, diagnostics, remedies = build_findings(
+            records, answers, labels, rule_response_ids, analysis.execution_mode
+        )
+    except ValueError as exc:
+        raise ReportServiceError(409, "analysis_not_reportable", str(exc)) from exc
     return ReportContent(
         analysis_id=analysis_id,
         summary={
             "execution_mode": analysis.execution_mode,
             "model_identifier": analysis.model_identifier,
             "prompt_version": analysis.prompt_version,
-            "aggregate": analysis.aggregate.model_dump(mode="json"),
-            "by_engine": {
-                engine: aggregate.model_dump(mode="json")
-                for engine, aggregate in analysis.by_engine.items()
-            },
-            "by_prompt_branding": {
-                group: aggregate.model_dump(mode="json")
-                for group, aggregate in analysis.by_prompt_branding.items()
-            },
             "prompt_mapping_version": analysis.prompt_mapping_version,
-            "shared_prompt_comparison": analysis.shared_prompt_comparison.model_dump(mode="json"),
+            **blocks,
             "score_scope": "Visibility and endorsement only; not factual accuracy or business impact.",
         },
         diagnostics=diagnostics,

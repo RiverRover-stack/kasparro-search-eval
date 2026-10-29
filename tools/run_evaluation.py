@@ -166,8 +166,7 @@ def seeded_defect_check() -> dict:
         answers = {row.id: row.answer_text for row in session.scalars(select(ResponseRecord))}
 
     clean = check_report_evidence(content, results, answers)
-    visibility = next(item for item in content["diagnostics"] if item["id"] == "visibility")
-    linked = visibility["evidence_response_ids"][0]
+    linked = content["diagnostics"][1]["evidence_response_ids"][0]
     spare = next(response_id for response_id in sorted(results) if response_id != linked)
 
     unknown = deepcopy(content)

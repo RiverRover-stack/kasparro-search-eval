@@ -159,7 +159,7 @@ def test_report_rejects_changed_computed_summary(session_factory: sessionmaker[S
         analysis = execute_analysis(session, dataset.dataset_id, ControlledStubClassifier(), 20_000)
         report = create_report(session, analysis.analysis_id, "analyst", "request-create")
         content = report.current_version.content.model_copy(deep=True)
-        content.summary["aggregate"]["average_visibility_score"] = 100
+        content.summary["literal_name_counts"]["total"]["named"] = 0
         with pytest.raises(ReportServiceError) as caught:
             edit_report(session, report.report_id, content, "analyst", "request-edit")
         assert caught.value.code == "computed_summary_immutable"

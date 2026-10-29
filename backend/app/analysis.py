@@ -40,9 +40,7 @@ _CATEGORY_MAPPING = Path(__file__).resolve().parents[2] / "evaluation" / "prompt
 _MAPPED_SOURCE_RUN = "4a4b71d9-9b0d-4497-85f1-7db5c4e21472"
 
 
-def _prompt_branding_groups(
-    records: list[ResponseClassificationRecord], source_run_id: str
-) -> tuple[str, dict[str, AnalysisAggregateView]]:
+def prompt_branding_labels(source_run_id: str) -> tuple[str, dict[str, str]]:
     mapping = json.loads(_CATEGORY_MAPPING.read_text(encoding="utf-8"))
     labels: dict[str, str] = {}
     if source_run_id == _MAPPED_SOURCE_RUN:
@@ -53,12 +51,19 @@ def _prompt_branding_groups(
                 if prompt_id in labels:
                     raise ValueError(f"Duplicate prompt category for {prompt_id}")
                 labels[prompt_id] = "branded" if rule["branded"] else "unbranded"
+    return mapping["mapping_version"], labels
+
+
+def _prompt_branding_groups(
+    records: list[ResponseClassificationRecord], source_run_id: str
+) -> tuple[str, dict[str, AnalysisAggregateView]]:
+    mapping_version, labels = prompt_branding_labels(source_run_id)
     grouped: dict[str, list[ResponseClassificationRecord]] = {
         "branded": [], "unbranded": [], "unmapped": []
     }
     for record in records:
         grouped[labels.get(record.prompt_id, "unmapped")].append(record)
-    return mapping["mapping_version"], {name: _aggregate(items) for name, items in grouped.items()}
+    return mapping_version, {name: _aggregate(items) for name, items in grouped.items()}
 
 
 def execute_analysis(
