@@ -1,0 +1,289 @@
+{
+  "model_held_out": {
+    "execution_mode": "frozen hosted_groq artifact (openai/gpt-oss-120b), read from evaluation/, not rerun",
+    "summary": {
+      "total_cases": 8,
+      "validated_cases": 5,
+      "validation_coverage": 0.625,
+      "passed_cases": 4,
+      "exact_case_pass_rate": 0.5,
+      "per_label": {
+        "brand_mentioned": {
+          "tp": 3,
+          "tn": 2,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "agreement": 0.625
+        },
+        "recommended": {
+          "tp": 0,
+          "tn": 4,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "agreement": 0.5
+        },
+        "negative_characterization": {
+          "tp": 2,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "agreement": 0.625
+        },
+        "observable_position": {
+          "matches": 5,
+          "agreement": 0.625
+        }
+      }
+    },
+    "summary_matches_artifact": true,
+    "failed_cases": [
+      {
+        "response_id": "67b714d5-bf90-42c2-a360-1d1d3149c1f8",
+        "last_attempt_error": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supp"
+      },
+      {
+        "response_id": "08f81acc-0824-4e3a-a5d5-58446e2a6a90",
+        "last_attempt_error": "Groq HTTP 400: Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '/supp"
+      },
+      {
+        "response_id": "5beb2a32-6c6c-42d8-861c-9fc9680b9930",
+        "last_attempt_error": "ValidationError: 1 validation error for ClassificationResult Value error, Negative characterization requires a brand mention [type=value_error, input_value={'co"
+      }
+    ]
+  },
+  "baseline_held_out": {
+    "execution_mode": "rules baseline (tools/rule_baseline.py), no model",
+    "summary": {
+      "total_cases": 8,
+      "validated_cases": 8,
+      "validation_coverage": 1.0,
+      "passed_cases": 4,
+      "exact_case_pass_rate": 0.5,
+      "per_label": {
+        "brand_mentioned": {
+          "tp": 5,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "agreement": 1.0
+        },
+        "recommended": {
+          "tp": 0,
+          "tn": 7,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "agreement": 0.875
+        },
+        "negative_characterization": {
+          "tp": 0,
+          "tn": 4,
+          "fp": 1,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "agreement": 0.5
+        },
+        "observable_position": {
+          "matches": 8,
+          "agreement": 1.0
+        }
+      }
+    }
+  },
+  "model_development": {
+    "execution_mode": "frozen hosted_groq artifact (openai/gpt-oss-120b), read from evaluation/, not rerun",
+    "summary": {
+      "total_cases": 4,
+      "validated_cases": 4,
+      "validation_coverage": 1.0,
+      "passed_cases": 4,
+      "exact_case_pass_rate": 1.0,
+      "per_label": {
+        "brand_mentioned": {
+          "tp": 3,
+          "tn": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "agreement": 1.0
+        },
+        "recommended": {
+          "tp": 1,
+          "tn": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "agreement": 1.0
+        },
+        "negative_characterization": {
+          "tp": 3,
+          "tn": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "agreement": 1.0
+        },
+        "observable_position": {
+          "matches": 4,
+          "agreement": 1.0
+        }
+      }
+    },
+    "note": "the artifact stores no expected labels or summary; expected labels come from labels-v1.json",
+    "failed_cases": []
+  },
+  "baseline_development": {
+    "execution_mode": "rules baseline (tools/rule_baseline.py), no model",
+    "summary": {
+      "total_cases": 4,
+      "validated_cases": 4,
+      "validation_coverage": 1.0,
+      "passed_cases": 1,
+      "exact_case_pass_rate": 0.25,
+      "per_label": {
+        "brand_mentioned": {
+          "tp": 3,
+          "tn": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "agreement": 1.0
+        },
+        "recommended": {
+          "tp": 0,
+          "tn": 3,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "agreement": 0.75
+        },
+        "negative_characterization": {
+          "tp": 0,
+          "tn": 1,
+          "fp": 0,
+          "fn": 3,
+          "precision": null,
+          "recall": 0.0,
+          "agreement": 0.25
+        },
+        "observable_position": {
+          "matches": 4,
+          "agreement": 1.0
+        }
+      }
+    }
+  },
+  "baseline_synthetic": {
+    "execution_mode": "rules baseline (tools/rule_baseline.py), no model",
+    "summary": {
+      "total_cases": 2,
+      "validated_cases": 2,
+      "validation_coverage": 1.0,
+      "passed_cases": 0,
+      "exact_case_pass_rate": 0.0,
+      "per_label": {
+        "brand_mentioned": {
+          "tp": 2,
+          "tn": 0,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "agreement": 1.0
+        },
+        "recommended": {
+          "tp": 1,
+          "tn": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.5,
+          "agreement": 0.5
+        },
+        "negative_characterization": {
+          "tp": 0,
+          "tn": 1,
+          "fp": 0,
+          "fn": 1,
+          "precision": null,
+          "recall": 0.0,
+          "agreement": 0.5
+        },
+        "observable_position": {
+          "matches": 1,
+          "agreement": 0.5
+        }
+      }
+    }
+  },
+  "cross_checks": {
+    "held_out_summary_matches_artifact": true,
+    "held_out_passed_flags_match": true,
+    "development_passed_flags_match": true
+  },
+  "score_arithmetic": {
+    "checked": 28,
+    "contract_allowed_combinations": 5,
+    "from_expected_labels": 14,
+    "from_validated_model_results": 9,
+    "mismatches": 0
+  },
+  "report_evidence_check": {
+    "label": "STUB analysis, mechanics only, not model quality",
+    "execution_mode": "stub",
+    "results_checked": 150,
+    "clean_problems": [],
+    "seeded_defects_flagged": {
+      "evidence_id_not_in_analysis": true,
+      "failed_result_in_non_failure_section": true,
+      "excerpt_not_in_answer": true,
+      "remedy_without_shared_evidence": true
+    },
+    "seeded_defect_problems": {
+      "evidence_id_not_in_analysis": [
+        "visibility: evidence not-in-analysis is not in the analysis"
+      ],
+      "failed_result_in_non_failure_section": [
+        "visibility: evidence 003061a9-6cdd-45a0-89c4-9a139020da4a has status failed, not successful",
+        "engine-comparison: evidence 003061a9-6cdd-45a0-89c4-9a139020da4a has status failed, not successful",
+        "verify-evidence: evidence 003061a9-6cdd-45a0-89c4-9a139020da4a has status failed, not successful",
+        "repeat-sampling: evidence 003061a9-6cdd-45a0-89c4-9a139020da4a has status failed, not successful"
+      ],
+      "excerpt_not_in_answer": [
+        "coverage: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
+        "visibility: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
+        "engine-comparison: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
+        "review-failures: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
+        "verify-evidence: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
+        "repeat-sampling: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'"
+      ],
+      "remedy_without_shared_evidence": [
+        "verify-evidence: remedy shares no evidence with any diagnostic"
+      ]
+    }
+  },
+  "limits": [
+    "The labels are the project owner's own, not an independent annotation.",
+    "Only four fields are compared: brand_mentioned, recommended, negative_characterization and observable_position. Competitors and excerpt choice are not graded.",
+    "The held-out set is 8 cases and contains one positive recommendation case, so recommended precision and recall rest on very little.",
+    "The model results come from a single frozen run. Repeatability is unverified, so every model-quality statement here is single-run and unverified.",
+    "The baseline cue lists were fixed before the first evaluation run and were not changed afterwards.",
+    "No LLM judges anything here; every comparison is a deterministic rule against the owner's labels.",
+    "Quote traceability (an excerpt occurs verbatim in the answer) is not semantic correctness."
+  ]
+}
