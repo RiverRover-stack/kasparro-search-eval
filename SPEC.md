@@ -115,8 +115,8 @@ A returned link does not mean the page supports the claim.
 - Edits may change the findings and remedies, but **not** the computed scores and counts. Trying to
   returns `422` with code `computed_summary_immutable`.
 - **Submitting** freezes that version. Reviewer decisions attach only to that exact version.
-- Only the **reviewer** may approve or reject. A comment can be attached, but today it is optional.
-  The assignment expects a comment on every decision; making it required is in the plan.
+- Only the **reviewer** may approve or reject, and every decision needs a non-blank comment (a
+  missing or blank one returns `422`, code `comment_required`, and the version stays submitted).
 - Export works only for an approved version. The default is the latest version; if it is unapproved
   or rejected, export is refused. A caller may name an **older** approved version, which exports with
   its version clearly identified. It does not make a newer draft approved.
@@ -130,8 +130,8 @@ A returned link does not mean the page supports the claim.
 | Method and path | Who | Purpose |
 |---|---|---|
 | `GET /health` | anyone | Service and database check |
-| `POST /datasets` | **anyone today** | Import the input pack |
-| `POST /analyses` | **anyone today** | Run a classifier over a dataset |
+| `POST /datasets` | analyst | Import the input pack |
+| `POST /analyses` | analyst | Run a classifier over a dataset |
 | `GET /analyses/{id}` | anyone | Results, counts, engine and category averages |
 | `POST /reports` | analyst | Create a draft report from an analysis |
 | `GET /reports/{id}` | analyst or reviewer | Read a report and its versions |
@@ -140,10 +140,7 @@ A returned link does not mean the page supports the claim.
 | `POST /reports/{id}/decision` | reviewer | Approve or reject a submitted version |
 | `GET /reports/{id}/export?version_id=` | analyst or reviewer | Export an approved version |
 
-Interactive docs are at `/docs` when the server runs.
-
-> **Gap:** the assignment says only the analyst may import and analyse. Today `POST /datasets` and
-> `POST /analyses` need no token. Closing this is Step 2b in the plan.
+Interactive docs are at `/docs` when the server runs. Send the token as `Authorization: Bearer <token>`.
 
 **Errors** from the app's own checks return a safe message and a request ID, with the right status.
 Two exceptions today: a malformed request body (FastAPI's default `422`) and unknown routes or wrong
@@ -200,6 +197,8 @@ restarts is marked `interrupted` at startup. Full resume is out of scope.
 | Summary cannot be edited | `tests/test_reports.py::test_report_rejects_changed_computed_summary` |
 | Foreign evidence rejected | `tests/test_reports.py::test_report_rejects_foreign_evidence_reference` |
 | Health and API docs | `tests/test_health.py` |
+| Import and analysis are analyst-only; decision is reviewer-only | `tests/test_auth.py` (checks each route's dependencies and the role functions; not a live HTTP call) |
+| Decision needs a comment | `tests/test_reports.py::test_decision_requires_a_reviewer_comment` |
 
-Still without a dedicated test (listed in the plan): analyst-only import/analysis, an unsupported
-diagnostic claim, and a named regression for the documented model failure.
+Still without a dedicated test (listed in the plan): an unsupported diagnostic claim, and a named
+regression for the documented model failure.

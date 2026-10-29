@@ -88,10 +88,13 @@ responses, and a practical estimate is 75–90 minutes plus any provider retry w
 before running it, even if a future provider passes the quality gate.
 
 ```powershell
-$dataset = Invoke-RestMethod -Method Post http://127.0.0.1:8000/datasets
+$analystHeaders = @{ Authorization = "Bearer $env:KASPARRO_ANALYST_TOKEN" }
+$dataset = Invoke-RestMethod -Method Post -Headers $analystHeaders http://127.0.0.1:8000/datasets
 $body = @{ dataset_id = $dataset.dataset_id; execution_mode = "hosted_groq" } | ConvertTo-Json
-Invoke-RestMethod -Method Post -ContentType "application/json" -Body $body http://127.0.0.1:8000/analyses
+Invoke-RestMethod -Method Post -Headers $analystHeaders -ContentType "application/json" -Body $body http://127.0.0.1:8000/analyses
 ```
+
+Importing and analysing require the analyst token; a reviewer token gets `403`.
 
 The current API runs sequentially in the request process, and the adapter honors provider rate-limit
 waits and bounded retries. The HTTP request may therefore remain open for a long time. A background
@@ -101,10 +104,11 @@ worker is production hardening for Phase 6, not part of this local assignment wo
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8000/health
-Invoke-RestMethod -Method Post http://127.0.0.1:8000/datasets
-$dataset = Invoke-RestMethod -Method Post http://127.0.0.1:8000/datasets
+$analystHeaders = @{ Authorization = "Bearer $env:KASPARRO_ANALYST_TOKEN" }
+$dataset = Invoke-RestMethod -Method Post -Headers $analystHeaders http://127.0.0.1:8000/datasets
+$dataset = Invoke-RestMethod -Method Post -Headers $analystHeaders http://127.0.0.1:8000/datasets
 $body = @{ dataset_id = $dataset.dataset_id; execution_mode = "stub" } | ConvertTo-Json
-$analysis = Invoke-RestMethod -Method Post -ContentType "application/json" -Body $body http://127.0.0.1:8000/analyses
+$analysis = Invoke-RestMethod -Method Post -Headers $analystHeaders -ContentType "application/json" -Body $body http://127.0.0.1:8000/analyses
 Invoke-RestMethod "http://127.0.0.1:8000/analyses/$($analysis.analysis_id)"
 ```
 

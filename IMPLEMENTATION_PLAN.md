@@ -20,10 +20,10 @@ next step without approval.
 | Classify all 150 responses (success / failed / skipped) | Mechanics done; **real run not done** |
 | Transparent 0/25/100 score, denominators, engine and category views | Done |
 | Report with 3 diagnostics + 3 remedies; edit, submit, decide, export | Done, tested |
-| Analyst-only import and analysis | **Gap:** `POST /datasets` and `/analyses` need no token |
-| Reviewer comment on every decision | **Gap:** comment is optional |
+| Analyst-only import and analysis | Done (Step 2b) |
+| Reviewer comment on every decision | Done (Step 2b) |
 | Health endpoint, API docs | Done |
-| Required backend tests (invalid input, duplicates, timeout/malformed, wrong role, rejection blocks export, edit after approval) | Done at service level; wrong role is not yet tested through an HTTP endpoint (Step 2b adds that) |
+| Required backend tests (invalid input, duplicates, timeout/malformed, wrong role, rejection blocks export, edit after approval) | Done at service level; route wiring checked in `tests/test_auth.py`. No live-HTTP wrong-role test, because `TestClient` hangs here (verify manually in Step 5) |
 | Malformed bodies and unknown routes return the structured error | **Gap:** framework default body, no `code` |
 | Unique-link counting with the stated de-duplication rule | **Not implemented** (only a citations-present flag) |
 | 8+ hand-labelled cases + 2 edge cases, split dev/held-out | Done (`evaluation/labels-v1.json`) |
@@ -42,18 +42,17 @@ next step without approval.
 ### Step 0: Secure existing work. Done
 Committed the branded/unbranded aggregates and the computed-summary guard (`27d132b`, `3570834`).
 
-### Step 1: Documentation. Done, awaiting review
+### Step 1: Documentation. Done
 `CLAUDE.md`, `SPEC.md`, this plan, `STATUS.md`; `AGENTS.md` points to `CLAUDE.md`.
-Done when: the owner can follow the flow and the gaps from these files alone.
 
 ### Step 2: Make the code easy to change
-Behaviour must not change; all tests stay green after each move.
-- [ ] **2a. Split `classification.py`** (603 lines) into a package: `contract.py` (output form,
+Moves must not change behaviour; all tests stay green after each. 2b is the one deliberate exception.
+- [x] **2a. Split `classification.py`** (603 lines) into a package: `contract.py` (output form,
   versions), `prompt.py`, `adapters.py` (protocol, stub, replay), `ollama.py`, `groq.py`. Keep
-  `from backend.app.classification import ...` working.
-- [ ] **2b. Close the two access gaps:** require the analyst token on `POST /datasets` and
-  `POST /analyses`; make the reviewer comment required. Add tests for each (wrong role denied;
-  missing comment rejected). This one *does* change behaviour, so it is its own commit.
+  `from backend.app.classification import ...` working. Done (`8cccaf2`).
+- [x] **2b. Close the two access gaps:** require the analyst token on `POST /datasets` and
+  `POST /analyses`; make the reviewer comment required. Tests added for each. It changes behaviour,
+  so it is its own commit. Done, awaiting commit.
 - [ ] **2c. Move scoring and aggregation** into `backend/app/scoring.py` (`visibility_score`, the
   aggregate and comparison helpers now inside `analysis.py`).
 - [ ] **2d.** One-line docstring at the top of each `backend/app/` module.
