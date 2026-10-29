@@ -60,8 +60,14 @@ Moves must not change behaviour; all tests stay green after each. 2b is the one 
 Done when: pytest passes with the same tests, and the import surface is unchanged.
 Trim first if time is short: 2d, then 2c.
 
-### Step 3: The full Groq run (needs approval at 3a and again before 3b)
-Sends all 150 archived answers to a hosted service, so it needs explicit approval and a limits check.
+### Step 3: The live Groq run (scope changed: sample, not all 150)
+You are on the free plan (8,000 tokens/min; published 200,000 tokens/day), so the run is: rule for the 78
+answers without the brand name, Groq for a fixed sample of 39 of the 72 mention answers (13 per engine), the rest `skipped`
+with a reason. Budget: about 98K input tokens, at most about 178K even if the daily cap charges the reserved
+output, against a 200K/day limit; about 25 minutes paced. 3a and 3b are done; 3c needs your approval before
+anything is sent, and uses a fresh database (`--database-url sqlite:///backend/live-run.db`).
+Status: **3a done. 3b done and committed. 3c not started.** The checkboxes below are the original
+wording; read them with this scope.
 - [ ] **3a. Check limits, send nothing in bulk.** Read Groq's published limits for
   `openai/gpt-oss-120b` (requests and tokens per minute and per day, context size, max output).
   With approval, one minimal probe request to read the `x-ratelimit-*` headers for this account's

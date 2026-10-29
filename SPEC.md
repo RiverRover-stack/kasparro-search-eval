@@ -50,6 +50,17 @@ evidence, and how sure it is. The classifier can be:
 | `replay` | Pre-supplied answers per response ID | Plumbing only |
 | `local_ollama` | Local model (`gemma3:4b`) | Tried; did not pass our reliability checks |
 | `hosted_groq` | Groq-hosted model, key from the environment | The real model path |
+| `rules` | A literal check: the answer does not contain the word "kasparro" | Absence only. Scores 0; competitors are not extracted |
+
+A **mixed run** (`rules+hosted_groq`) uses the rule for answers without the brand name and the hosted
+model for a fixed sample of the answers that mention it. Every other answer is `skipped` with a reason
+such as `not_selected_for_live_run` or `excluded_labelled_evaluation_case`. The sample is chosen by
+SHA-256 of the response ID, 13 per engine, 39 in all (`live-sample-v1`), excluding the 12 labelled evaluation
+responses. It is a sample, not the "most important" answers, and reports must say so.
+
+If the provider's daily quota is exhausted (a 429 asking for a wait longer than the cap), the run stops
+as `interrupted`. Finished results are kept, the remaining answers get no result, and no report can be
+built from it.
 
 Every result and trace records which mode produced it. Answers are treated as untrusted text: they
 cannot change permissions, identity or tools.
