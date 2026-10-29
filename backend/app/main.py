@@ -152,7 +152,10 @@ def health(session: Session = Depends(get_session)) -> HealthResponse:
     responses={409: {"model": ErrorResponse}, 422: {"model": ErrorResponse}},
     tags=["datasets"],
 )
-def create_dataset(session: Session = Depends(get_session)) -> DatasetImportResponse:
+def create_dataset(
+    session: Session = Depends(get_session),
+    _actor: str = Depends(require_analyst),
+) -> DatasetImportResponse:
     settings = Settings.from_environment()
     return import_pack(session, settings.input_pack_path)
 
@@ -166,6 +169,7 @@ def create_dataset(session: Session = Depends(get_session)) -> DatasetImportResp
 def create_analysis(
     payload: AnalysisCreateRequest,
     session: Session = Depends(get_session),
+    _actor: str = Depends(require_analyst),
 ) -> AnalysisView:
     settings = Settings.from_environment()
     if payload.execution_mode == "stub":
