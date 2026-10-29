@@ -1,0 +1,8 @@
+# Direct dependencies at the versions the tests were run with (Python 3.13, Windows).
+# pyproject.toml holds the allowed ranges; install with: py -3 -m pip install -e ".[dev]"
+fastapi==0.128.0
+pydantic==2.13.4
+SQLAlchemy==2.0.46
+uvicorn==0.40.0
+httpx==0.28.1
+pytest==9.0.3

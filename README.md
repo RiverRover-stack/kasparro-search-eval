@@ -88,15 +88,15 @@ final verdict.
   did not follow the required answer format. Failures are shown, never counted as zero.
 
 - A report writer that uses the real results. It shows how often the name appears (all 150 answers)
-  apart from what the AI model found, with the failed and skipped counts next to each number. The report no longer repeats the blended average. It is
-  built and tested but still waiting for review.
+  apart from what the AI model found, with the failed and skipped counts next to each number. The report no longer repeats the blended average.
 
 **In progress**
 - Nothing is running.
 
 **Not done yet**
 - Known problems that remain are listed in `evaluation/analysis-output.json` under `known_issues`.
-  The second finding is the most important: it is misleading on the live run (see `docs/decision-note.md`).
+  The main one: 5 of the 30 prompts marked "branded" do not contain the name Kasparro. The second finding
+  now cites only prompts that do, and says so (see `docs/decision-note.md`).
 - Counting unique links in answers.
 - Resuming an analysis that stopped halfway.
 
@@ -124,6 +124,23 @@ py -3 -m uvicorn backend.app.main:app
 ```
 
 Then open `http://127.0.0.1:8000/docs`. More notes are in [`docs/onboarding.md`](docs/onboarding.md).
+
+Exact package versions the project was tested with are in `requirements-tested.txt`.
+
+### No key needed, and the real model
+
+Set `execution_mode` in the analysis request.
+
+- `stub`: no model and no internet. It proves the app works (import, scoring, review, export). It says
+  nothing about model quality.
+- `replay`: plays back saved model answers sent in the request. `py -3 toolsun_evaluation.py` does the
+  same with the saved real-model results in `evaluation/`, with no internet and no key. Model-quality
+  numbers from it are single-run and unverified.
+- `hosted_groq`: the real model. Put `GROQ_API_KEY=...` and `KASPARRO_GROQ_MODEL=openai/gpt-oss-120b` in
+  `.env`. Without the key the API returns 422; it never switches model on its own.
+  `py -3 toolsun_live_analysis.py` only prints a plan. Sending needs `--confirm-send`, and it takes
+  about 25 minutes because of the free plan's limits (see `docs/onboarding.md`).
+- `local_ollama`: a local model. Downloading it first can take a while.
 
 Instead of typing the two secrets each time, you can copy `.env.example` to `.env` and fill them in.
 `.env` is never committed. `.env.example` lists every setting, with the secrets left blank.
