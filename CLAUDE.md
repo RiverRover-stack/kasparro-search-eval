@@ -31,6 +31,17 @@ py -3 -m uvicorn backend.app.main:app --reload   # run API; docs at http://127.0
 
 Setup details and request examples: `docs/onboarding.md` (README is being rewritten in the plan).
 
+## Documentation sets (keep them separate)
+
+| Set | Files | Audience and style |
+|---|---|---|
+| Reader-facing | `README.md` | People viewing the project. Very simple words, short sentences, honest status. Never claim unbuilt work. |
+| Owner's private reference | `docs/PROJECT.md`, `docs/AI_CONTEXT.md` (both gitignored) | The owner, and a paste-in brief for other AIs. Never track them. |
+| Agent and contributor | `CLAUDE.md`, `SPEC.md`, `IMPLEMENTATION_PLAN.md`, `STATUS.md`, `docs/adr/`, `journey/` | Precise, technical. |
+
+After each milestone: update `STATUS.md` always; `README.md` if status or results changed;
+`docs/PROJECT.md` and `docs/AI_CONTEXT.md` if the project's state changed.
+
 ## Where things live
 
 | Path | Purpose |
