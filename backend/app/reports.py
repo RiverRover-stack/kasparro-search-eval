@@ -336,6 +336,8 @@ def decide_report(
         raise ReportServiceError(404, "version_not_found", f"Version {version_id} was not found")
     if version.status != "submitted":
         raise ReportServiceError(409, "version_not_submitted", "Only a submitted version can be decided")
+    if version.id != report.current_version_id:
+        raise ReportServiceError(409, "stale_report_version", "Only the current report version can be decided")
     if decision not in {"approved", "rejected"}:
         raise ReportServiceError(422, "invalid_decision", "Decision must be approved or rejected")
     if not comment or not comment.strip():

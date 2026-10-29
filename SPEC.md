@@ -143,6 +143,8 @@ A returned link does not mean the page supports the claim.
 - **Submitting** freezes that version. Reviewer decisions attach only to that exact version.
 - Only the **reviewer** may approve or reject, and every decision needs a non-blank comment (a
   missing or blank one returns `422`, code `comment_required`, and the version stays submitted).
+- Only the **current** version can be decided. If the analyst has edited since submitting, deciding the
+  older submitted version returns `409`, code `stale_report_version`, and that version stays submitted.
 - Export works only for an approved version. The default is the latest version; if it is unapproved
   or rejected, export is refused. A caller may name an **older** approved version, which exports with
   its version clearly identified. It does not make a newer draft approved.
@@ -174,7 +176,7 @@ methods (`404`/`405`) return the framework's default body without a `code` or re
 `X-Request-ID` header is still set. Statuses: `401` no token, `403`
 unknown token or wrong role, `503` fewer than two tokens configured on the server, `404`
 not found, `409` conflict (changed content under an existing run ID, analysis already running,
-second report for one analysis, submitting a stale or non-draft version, deciding a non-submitted
+second report for one analysis, submitting a stale or non-draft version, deciding a non-submitted or superseded
 version, exporting an unapproved version), `422` invalid input. Report errors carry a stable `code`
 such as `version_not_approved` or `computed_summary_immutable`.
 

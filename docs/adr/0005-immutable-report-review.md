@@ -8,7 +8,8 @@ Store every report edit as a new version with a canonical SHA-256 content hash. 
 current draft. Approval or rejection is a separate record bound to that submitted version. Evidence
 links are normalized rows from report sections to response-classification results in the same
 analysis. Default export considers only the current version; callers may explicitly export an older
-approved version.
+approved version. A decision is accepted only for the current version, so a submitted version that a
+newer draft has replaced cannot be approved or rejected (`409`, `stale_report_version`).
 
 Analyst and reviewer permissions use separate environment-provided bearer tokens. The server derives
 the role and stores only the role name in review and audit records.

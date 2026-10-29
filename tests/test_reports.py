@@ -167,6 +167,40 @@ def test_report_rejects_changed_computed_summary(session_factory: sessionmaker[S
         assert session.scalar(select(func.count()).select_from(ReportVersion)) == 1
 
 
+def test_decision_on_superseded_submitted_version_is_refused(
+    session_factory: sessionmaker[Session]
+) -> None:
+    with session_factory() as session:
+        dataset = import_pack(session, ROOT)
+        analysis = execute_analysis(session, dataset.dataset_id, ControlledStubClassifier(), 20_000)
+        report = create_report(session, analysis.analysis_id, "analyst", "request-create")
+        report_id = report.report_id
+        version_1 = report.current_version_id
+        submit_report(session, report_id, version_1, "analyst", "request-submit")
+        edited = edit_report(
+            session, report_id, report.current_version.content.model_copy(deep=True),
+            "analyst", "request-edit",
+        )
+        assert edited.current_version_id != version_1
+
+        with pytest.raises(ReportServiceError) as caught:
+            decide_report(
+                session, report_id, version_1, "approved", "Evidence reviewed.",
+                "reviewer", "request-decide-stale",
+            )
+        assert caught.value.status_code == 409
+        assert caught.value.code == "stale_report_version"
+
+        after = get_report(session, report_id)
+        frozen_v1 = next(version for version in after.versions if version.version_id == version_1)
+        assert frozen_v1.status == "submitted"
+        assert session.scalar(select(func.count()).select_from(ReviewDecision)) == 0
+        with pytest.raises(ReportServiceError) as not_exportable:
+            export_report(session, report_id, version_1, "analyst", "request-export-stale")
+        assert not_exportable.value.status_code == 409
+        assert not_exportable.value.code == "version_not_approved"
+
+
 @pytest.mark.parametrize("comment", [None, "", "   "])
 def test_decision_requires_a_reviewer_comment(
     session_factory: sessionmaker[Session], comment: str | None
