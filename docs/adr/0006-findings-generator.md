@@ -77,5 +77,11 @@ that name Kasparro. That average is not a measure of Kasparro's visibility.
   marked outside the quote. `tools/check_report_evidence.py` checks that every quoted excerpt is an
   exact substring of the cited answer. This proves the words are real, not what they mean. D3 still
   uses the stored model excerpts.
+- D2 and prompts that do not name the brand: the frozen mapping labels prompts 026-030 "branded", but
+  their text does not contain "Kasparro" (5 of 30 branded prompts per engine). The owner chose to keep
+  the mapping. D2 now cites only answers to branded-labelled prompts whose text contains the brand
+  (found in the stored prompt text), and its observed pattern says how many branded-labelled prompts do
+  not. The engine's branded numbers are unchanged. If no branded prompt names the brand, D2 falls back
+  to any branded answer and does not claim otherwise.
 - The sentence-number remedy for the quote failures is a proposal. It has not been tested.
 - Existing report versions are not rewritten. Only new drafts use the new content.

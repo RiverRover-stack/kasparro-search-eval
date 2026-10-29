@@ -8,7 +8,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from .analysis import get_analysis, prompt_branding_labels
-from .findings import build_findings
+from .findings import BRAND, build_findings
 from .models import (
     AnalysisRun,
     AuditEvent,
@@ -17,6 +17,7 @@ from .models import (
     ReportEvidenceLink,
     ReportVersion,
     ResponseClassificationRecord,
+    PromptRecord,
     ResponseRecord,
     ReviewDecision,
     utc_now,
@@ -99,10 +100,19 @@ def _initial_content(session: Session, analysis_id: str) -> ReportContent:
             )
         )
     )
+    prompt_named = {
+        prompt_id
+        for prompt_id, text in session.execute(
+            select(PromptRecord.id, PromptRecord.text).where(
+                PromptRecord.id.in_({record.prompt_id for record in records})
+            )
+        )
+        if BRAND in text.casefold()
+    }
     _, labels = prompt_branding_labels(session.get(AnalysisRun, analysis_id).dataset.source_run_id)
     try:
         blocks, diagnostics, remedies = build_findings(
-            records, answers, labels, rule_response_ids, analysis.execution_mode
+            records, answers, labels, rule_response_ids, analysis.execution_mode, prompt_named
         )
     except ValueError as exc:
         raise ReportServiceError(409, "analysis_not_reportable", str(exc)) from exc

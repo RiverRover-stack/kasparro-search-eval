@@ -88,7 +88,7 @@ def model_classification(records, rule_response_ids: set[str], execution_mode: s
             else ""
         )
         notes.append(
-            f"Only {recommended} of {len(valid)} valid model results recommended Kasparro. "
+            f"Only {recommended} of {len(valid)} successful model results recommended Kasparro. "
             f"This may mean the model under-detects recommendations{held_out}."
         )
     return {
@@ -154,10 +154,16 @@ def _bounded(text: str, start: int, end: int, keep: int | None = None) -> tuple[
     if end - start <= MAX_QUOTE:
         return text[start:end], ""
     note = "start of the sentence"
-    if keep is not None and keep + len(BRAND) > start + MAX_QUOTE:  # keep the brand name inside the quote
-        start = max(start, text.rfind(" ", start, max(keep - 100, start)) + 1)
-        note = "part of the sentence"
-    cut = text.rfind(" ", start, start + MAX_QUOTE)
+    brand_end = start  # the quote must reach at least this far
+    if keep is not None:
+        brand_end = keep + len(BRAND)
+        if brand_end > start + MAX_QUOTE:  # move the window forward so it holds the brand name
+            earliest = brand_end - MAX_QUOTE
+            begin = max(start, keep - 100, earliest)
+            space = text.rfind(" ", earliest, begin)
+            start = space + 1 if space != -1 else begin
+            note = "part of the sentence"
+    cut = text.rfind(" ", max(start, brand_end), start + MAX_QUOTE)
     return text[start : cut if cut > start else start + MAX_QUOTE], note
 
 
@@ -182,10 +188,13 @@ def _quote_line(response_id: str, quote: str, note: str) -> str:
 
 
 def _coverage(cell: dict) -> str:
-    return f"{cell['successful']} valid, {cell['failed']} failed, {cell['skipped']} skipped"
+    # successful covers answers settled by the literal rule and by the model; the cells do not split them
+    return f"{cell['successful']} successful, {cell['failed']} failed, {cell['skipped']} skipped"
 
 
-def _diagnostics(literal: dict, model: dict, records, answers, labels, valid_model_results) -> list[ReportDiagnostic]:
+def _diagnostics(
+    literal: dict, model: dict, records, answers, labels, valid_model_results, prompt_named=None
+) -> list[ReportDiagnostic]:
     cells = literal["by_engine_and_branding"]
     unbranded = literal["by_prompt_branding"]["unbranded"]
     branded = literal["by_prompt_branding"]["branded"]
@@ -255,12 +264,23 @@ def _diagnostics(literal: dict, model: dict, records, answers, labels, valid_mod
     cell = cells[f"{engine}|branded"]
     name = ENGINE_NAMES.get(engine, engine)
     above = Fraction(cell["named"], cell["responses"]) > Fraction(branded["named"], branded["responses"])
+    engine_branded = [r for r in records if r.engine == engine and labels.get(r.prompt_id) == "branded"]
+    # Cite only answers to prompts whose text names the brand; if there are none, cite any branded ones.
+    cite_named_only = prompt_named is not None and any(r.prompt_id in prompt_named for r in engine_branded)
+    cited = [r for r in engine_branded if not cite_named_only or r.prompt_id in prompt_named]
     branded_ids = _evidence_ids(
-        records,
-        lambda r: r.engine == engine
-        and labels.get(r.prompt_id) == "branded"
-        and _is_named(answers[r.response_id]) == above,
-    ) or _evidence_ids(records, lambda r: r.engine == engine and labels.get(r.prompt_id) == "branded")
+        cited, lambda r: _is_named(answers[r.response_id]) == above
+    ) or _evidence_ids(cited, lambda r: True)
+    unnamed_note = ""
+    if prompt_named is not None:
+        branded_prompts = {r.prompt_id for r in engine_branded}
+        without_name = len(branded_prompts - prompt_named)
+        if without_name:
+            unnamed_note = (
+                f" {without_name} of {len(branded_prompts)} branded-labelled prompts do not contain "
+                "the name Kasparro in the prompt text"
+                + ("; the evidence below cites only prompts that do." if cite_named_only else ".")
+            )
     def branded_line(response_id: str) -> str:
         found = brand_sentence(answers[response_id])
         if found:
@@ -278,6 +298,7 @@ def _diagnostics(literal: dict, model: dict, records, answers, labels, valid_mod
             f"answers ({_percent(cell['named'], cell['responses'])}); all engines together named it in "
             f"{branded['named']} of {branded['responses']} ({_percent(branded['named'], branded['responses'])}). "
             f"Classification coverage for {name}: {_coverage(cell)}."
+            + unnamed_note
         ),
         possible_explanation=(
             "Hypothesis, not verified: the engines may differ in how often they repeat a brand named in "
@@ -300,11 +321,11 @@ def _diagnostics(literal: dict, model: dict, records, answers, labels, valid_mod
     attempted = calls["valid"] + calls["failed"]
     d3 = ReportDiagnostic(
         id="model-findings",
-        title="What the model found in the answers that name Kasparro",
+        title=f"What the classifier found in the answers it read (execution mode: {model['execution_mode']})",
         observed_pattern=(
-            f"Of {calls['valid']} valid model results, {model['mentioned_only']} mention Kasparro without "
+            f"Of {calls['valid']} successful model results, {model['mentioned_only']} mention Kasparro without "
             f"recommending it and {model['recommended']} recommend it. {model['negative']} describe it "
-            f"negatively (this overlaps the others). Coverage: {calls['valid']} valid; "
+            f"negatively (this overlaps the others). Coverage: {calls['valid']} successful; "
             f"{calls['failed']} of {attempted} model calls failed; {calls['skipped']} answers were not sent."
         ),
         possible_explanation=f"Hypothesis, not verified: {model['notes'][-1]}",
@@ -415,7 +436,8 @@ def _remedies(literal, model, records, answers, labels, valid_model_results, dia
                     if unbranded["named"] == 0
                     else f"In the {unbranded['absent']} answers that do not name it, "
                 )
-                + "the archive cannot show what the engines say instead."
+                + "the linked answers show what the engines say instead, but the archive does not show "
+                "why, or which brands the engines name across all answers."
             ),
             evidence_response_ids=linked(
                 _evidence_ids(
@@ -444,13 +466,13 @@ def _remedies(literal, model, records, answers, labels, valid_model_results, dia
             priority=3,
             title="Check recommendation counts by hand",
             problem=(
-                f"Only {model['recommended']} of {calls['valid']} valid model results recommended "
+                f"Only {model['recommended']} of {calls['valid']} successful model results recommended "
                 "Kasparro. The model may be missing recommendations, so this count should "
                 "not be trusted yet."
             ),
             evidence_response_ids=linked(model_ids),
             action=(
-                f"A reviewer reads all {calls['valid']} valid model-classified answers and marks "
+                f"A reviewer reads all {calls['valid']} successful model-classified answers and marks "
                 "which ones recommend Kasparro, without seeing the model label first."
             ),
             expected_benefit=(
@@ -467,9 +489,18 @@ def _remedies(literal, model, records, answers, labels, valid_model_results, dia
 
 
 def build_findings(
-    records, answers: dict[str, str], labels: dict[str, str], rule_response_ids: set[str], execution_mode: str
+    records,
+    answers: dict[str, str],
+    labels: dict[str, str],
+    rule_response_ids: set[str],
+    execution_mode: str,
+    prompt_named: set[str] | None = None,
 ) -> tuple[dict, list[ReportDiagnostic], list[ReportRemedy]]:
-    """Return the two summary blocks, three diagnostics and three remedies for one analysis."""
+    """Return the two summary blocks, three diagnostics and three remedies for one analysis.
+
+    prompt_named: ids of prompts whose own text contains the brand name; None means unknown, so
+    every branded prompt is treated as naming it.
+    """
     literal = literal_name_counts(records, answers, labels)
     if not {"branded", "unbranded"} <= set(literal["by_prompt_branding"]):
         raise ValueError("Diagnostics need both branded and unbranded prompts; prompt types are not mapped")
@@ -480,6 +511,6 @@ def build_findings(
     )
     if not valid_model_results:
         raise ValueError("Diagnostics need at least one valid model-classified answer")
-    diagnostics = _diagnostics(literal, model, records, answers, labels, valid_model_results)
+    diagnostics = _diagnostics(literal, model, records, answers, labels, valid_model_results, prompt_named)
     remedies = _remedies(literal, model, records, answers, labels, valid_model_results, diagnostics)
     return {"literal_name_counts": literal, "model_classification": model}, diagnostics, remedies

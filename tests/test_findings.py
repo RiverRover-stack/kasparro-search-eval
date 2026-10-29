@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from backend.app.analysis import execute_analysis
 from backend.app.classification import ControlledStubClassifier
 from backend.app.classification.adapters import LiteralAbsenceRouter
-from backend.app.findings import branded_outlier_engine, build_findings, literal_name_counts
+from backend.app.findings import ENGINE_NAMES, branded_outlier_engine, build_findings, literal_name_counts
 from backend.app.importer import import_pack
 from backend.app.models import (
     ModelAttemptRecord,
@@ -94,11 +94,10 @@ def test_model_block_is_separate_and_counts_only_non_rule_results(run) -> None:
     assert model["calls"]["quote_rejections"] == 2
     assert model["calls"]["valid"] + model["calls"]["failed"] == len(run.named) - model["calls"]["skipped"]
     assert model["mentioned_only"] + model["recommended"] == model["calls"]["valid"]
-    assert "negative" in model
+    assert model["negative"] == sum(r.classification["negative_characterization"] for r in valid)
     # Not blended: the literal block counts all 150; the model block only the model's answers.
     assert model["calls"]["valid"] < summary["literal_name_counts"]["total"]["responses"]
     assert set(summary) >= {"literal_name_counts", "model_classification"}
-    assert model["calls"] != summary["literal_name_counts"]["total"]
     joined = " ".join(model["notes"])
     assert f"{model['calls']['failed']} of {model['calls']['valid'] + model['calls']['failed']}" in joined
     assert "recommend" in joined
@@ -113,7 +112,10 @@ def test_exactly_three_diagnostics_and_remedies_with_problem(run) -> None:
     for diagnostic in content.diagnostics:
         assert 2 <= len(diagnostic.evidence_response_ids) <= 3
         assert "hypothesis" in diagnostic.possible_explanation.lower()
-        assert " of " in diagnostic.observed_pattern and "valid" in diagnostic.observed_pattern
+        assert re.search(r"\d+ of \d+", diagnostic.observed_pattern)
+    for diagnostic in content.diagnostics[:2]:
+        assert re.search(r"\d+ successful, \d+ failed, \d+ skipped", diagnostic.observed_pattern)
+    assert re.search(r"\d+ of \d+ model calls failed", content.diagnostics[2].observed_pattern)
 
 
 def _keys(value) -> list[str]:
@@ -202,8 +204,7 @@ def test_diagnostics_are_one_per_kind_with_the_expected_ids(run) -> None:
         if engine.endswith("|unbranded"):
             assert f"{cell['named']} of {cell['responses']}" in first
     outlier = branded_outlier_engine(literal)
-    assert content.diagnostics[1].id == "branded-engine-gap"
-    assert outlier in {"chatgpt", "gemini", "aimode"}
+    assert ENGINE_NAMES[outlier] in content.diagnostics[1].title
     cell = literal["by_engine_and_branding"][f"{outlier}|branded"]
     assert f"{cell['named']} of {cell['responses']}" in content.diagnostics[1].observed_pattern
 
@@ -345,7 +346,7 @@ def test_quote_remedy_with_no_failures_says_so_and_cites_model_answers() -> None
 def test_quote_remedy_with_other_failures_does_not_blame_quotes() -> None:
     _, _, remedies = build_findings(*_scenario(failed_reason="Groq HTTP 429: busy"), set(), "stub")
     first = remedies[0]
-    assert "0 of those" in first.problem or "none" in first.problem.lower()
+    assert "0 of those failed because of a quote mismatch" in first.problem
     assert "sentence numbers" not in first.action
 
 
@@ -400,7 +401,10 @@ def test_d1_and_d2_carry_exact_excerpts_and_d3_does_not(run) -> None:
             assert quote and len(quote) <= 300
             assert quote in answers[response_id]
     assert not _quotes(d3)
-    assert all("kasparro" in q.casefold() for _, q in _quotes(d2)) or "does not name" in d2.evidence_needed
+    for line in d2.evidence_needed.splitlines():
+        if line.startswith("Response "):  # each D2 quote names the brand or says that it does not
+            quote = QUOTE_LINE.match(line).group(2)
+            assert "kasparro" in quote.casefold() or "does not name Kasparro" in line
     assert "weakly" in d1.evidence_needed
 
 
@@ -459,3 +463,130 @@ def test_checker_flags_a_tampered_excerpt(run) -> None:
         assert any(response_id in p and "quoted excerpt not found" in p for p in problems)
         diagnostic.evidence_needed = diagnostic.evidence_needed.replace(quote + " tampered", quote, 1)
     assert check_report_evidence(content, by_response, answers) == []
+
+
+def _unnamed_prompt_scenario():
+    """_scenario plus p3: branded in the mapping, but its prompt text does not name Kasparro.
+
+    Gemini is the outlier. Its p3 answer is the one the old logic would pick first (it sorts before p1).
+    """
+    records, answers, labels = _scenario()
+    ok = {"recommended": False, "brand_mentioned": True, "negative_characterization": False}
+    for engine in ("aimode", "gemini", "chatgpt"):
+        answers[f"{engine}-p0"] = "Kasparro is here" if engine != "gemini" else "Nothing relevant here."
+        records.append(_record(f"{engine}-p0", engine, "p0", classification=ok))
+    labels["p0"] = "branded"
+    answers["gemini-p1"] = "Nothing relevant here either."
+    return records, answers, labels
+
+
+def test_d2_evidence_never_cites_a_prompt_that_does_not_name_the_brand() -> None:
+    records, answers, labels = _unnamed_prompt_scenario()
+    for named in ({"p1"}, {"p0"}, {"p0", "p1"}):
+        _, diagnostics, _ = build_findings(records, answers, labels, set(), "stub", named)
+        by_response = {r.response_id: r.prompt_id for r in records}
+        assert diagnostics[1].evidence_response_ids
+        assert all(by_response[i] in named for i in diagnostics[1].evidence_response_ids)
+
+
+def test_d2_regression_unnamed_prompt_answer_is_not_chosen() -> None:
+    records, answers, labels = _unnamed_prompt_scenario()
+    _, before, _ = build_findings(records, answers, labels, set(), "stub")
+    assert "gemini-p0" in before[1].evidence_response_ids
+    _, after, _ = build_findings(records, answers, labels, set(), "stub", {"p1"})
+    assert after[1].evidence_response_ids == ["gemini-p1"]
+
+
+def test_d2_says_how_many_branded_prompts_do_not_name_the_brand() -> None:
+    records, answers, labels = _unnamed_prompt_scenario()
+    _, diagnostics, _ = build_findings(records, answers, labels, set(), "stub", {"p1"})
+    text = diagnostics[1].observed_pattern
+    assert (
+        "1 of 2 branded-labelled prompts do not contain the name Kasparro in the prompt text; "
+        "the evidence below cites only prompts that do." in text
+    )
+    cell = literal_name_counts(records, answers, labels)["by_engine_and_branding"]["gemini|branded"]
+    assert f"named Kasparro in {cell['named']} of {cell['responses']}" in text  # engine cell unchanged
+
+
+def test_d2_has_no_extra_sentence_when_every_branded_prompt_names_the_brand() -> None:
+    records, answers, labels = _unnamed_prompt_scenario()
+    _, diagnostics, _ = build_findings(records, answers, labels, set(), "stub", {"p0", "p1"})
+    assert "do not contain" not in diagnostics[1].observed_pattern
+
+
+def test_d2_falls_back_to_branded_answers_when_no_branded_prompt_names_the_brand() -> None:
+    records, answers, labels = _unnamed_prompt_scenario()
+    _, diagnostics, _ = build_findings(records, answers, labels, set(), "stub", set())
+    assert diagnostics[1].evidence_response_ids
+    assert "2 of 2 branded-labelled prompts do not contain" in diagnostics[1].observed_pattern
+    assert "cites only prompts that do" not in diagnostics[1].observed_pattern
+
+
+def test_prompt_named_none_behaves_as_before() -> None:
+    records, answers, labels = _unnamed_prompt_scenario()
+    unknown = build_findings(records, answers, labels, set(), "stub")
+    every_prompt = build_findings(records, answers, labels, set(), "stub", {"p0", "p1", "p2"})
+    assert [d.model_dump() for d in unknown[1]] == [d.model_dump() for d in every_prompt[1]]
+    assert "do not contain" not in unknown[1][1].observed_pattern
+
+
+def test_real_pack_d2_cites_only_prompts_whose_text_names_the_brand(run) -> None:
+    from backend.app.models import PromptRecord
+
+    named = {
+        p.id for p in run.session.scalars(select(PromptRecord)) if "kasparro" in p.text.casefold()
+    }
+    prompt_of = {r.id: r.prompt_id for r in run.session.scalars(select(ResponseRecord))}
+    d2 = run.report.current_version.content.diagnostics[1]
+    assert all(prompt_of[i] in named for i in d2.evidence_response_ids)
+    assert "do not contain the name Kasparro in the prompt text" in d2.observed_pattern
+
+
+def test_brand_sentence_keeps_the_brand_when_nothing_before_it_has_a_space() -> None:
+    from backend.app.findings import brand_sentence
+
+    text = "x" * 295 + "Kasparro is named here, then more words follow in this long sentence."
+    quote, note = brand_sentence(text)
+    assert "Kasparro" in quote and quote in text and len(quote) <= 300 and note
+
+
+def test_brand_sentence_keeps_the_brand_when_the_last_space_is_before_its_word_ends() -> None:
+    from backend.app.findings import brand_sentence
+
+    text = "xx " * 95 + "Kasparroxxxxxxxxxxxxxxxxxxxx help teams, and many more words follow in this long sentence."
+    quote, note = brand_sentence(text)
+    assert "Kasparro" in quote and quote in text and len(quote) <= 300 and note
+
+
+def test_brand_sentence_far_into_a_long_sentence_is_a_marked_part() -> None:
+    from backend.app.findings import brand_sentence
+
+    text = "word " * 200 + "Kasparro is a tool " + "word " * 100 + "end."
+    quote, note = brand_sentence(text)
+    assert "Kasparro" in quote and quote in text and len(quote) <= 300
+    assert note == "part of the sentence"
+    assert "part of the sentence" not in quote
+
+
+def test_d3_title_is_true_for_a_plain_stub_run() -> None:
+    # in stub mode the classified answers need not name the brand, so the title may not say they do
+    records, answers, labels = _scenario()
+    _, diagnostics, _ = build_findings(records, answers, labels, set(), "stub")
+    title = diagnostics[2].title
+    assert diagnostics[2].id == "model-findings"
+    assert "name Kasparro" not in title and "stub" in title
+
+
+def test_coverage_says_successful_not_valid_for_rule_and_model_results() -> None:
+    _, diagnostics, _ = build_findings(*_scenario(), set(), "stub")
+    for diagnostic in diagnostics[:2]:
+        assert "successful," in diagnostic.observed_pattern
+        assert "valid" not in diagnostic.observed_pattern
+
+
+def test_remedy_two_agrees_with_d1_that_the_archive_shows_what_was_said_instead() -> None:
+    _, diagnostics, remedies = build_findings(*_scenario(), set(), "stub")
+    assert "cannot show what the engines say instead" not in remedies[1].problem
+    assert "linked answers show what the engines say instead" in remedies[1].problem
+    assert "Opening sentence" in diagnostics[0].evidence_needed

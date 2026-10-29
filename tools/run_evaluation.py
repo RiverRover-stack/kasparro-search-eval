@@ -27,7 +27,7 @@ from backend.app.importer import import_pack  # noqa: E402
 from backend.app.models import ResponseClassificationRecord, ResponseRecord  # noqa: E402
 from backend.app.reports import create_report  # noqa: E402
 from tools.benchmark_held_out import FIELDS, build_summary  # noqa: E402
-from tools.check_report_evidence import check_report_evidence  # noqa: E402
+from tools.check_report_evidence import QUOTE_LINE, check_report_evidence  # noqa: E402
 from tools.rule_baseline import baseline_labels  # noqa: E402
 
 EVALUATION = ROOT / "evaluation"
@@ -182,11 +182,17 @@ def seeded_defect_check() -> dict:
         item["evidence_response_ids"] = [linked]
     no_overlap["remedies"][1]["evidence_response_ids"] = [spare]
 
+    empty_quote = deepcopy(content)
+    empty_quote["diagnostics"][0]["evidence_needed"] = QUOTE_LINE.sub(
+        lambda found: f'Response {found.group(1)}: ""', empty_quote["diagnostics"][0]["evidence_needed"], count=1
+    )
+
     seeded = {
         "evidence_id_not_in_analysis": check_report_evidence(unknown, results, answers),
         "failed_result_in_non_failure_section": check_report_evidence(content, failed_results, answers),
         "excerpt_not_in_answer": check_report_evidence(content, bad_quote_results, answers),
         "remedy_without_shared_evidence": check_report_evidence(no_overlap, results, answers),
+        "empty_quote": check_report_evidence(empty_quote, results, answers),
     }
     return {
         "label": "STUB analysis, mechanics only, not model quality",

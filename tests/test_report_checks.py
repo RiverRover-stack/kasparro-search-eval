@@ -105,3 +105,18 @@ def test_remedy_without_shared_evidence_is_flagged() -> None:
 
     found = problems(content)
     assert any("verify-evidence" in item and "shares no evidence" in item for item in found)
+
+
+def test_empty_quoted_excerpt_is_flagged() -> None:
+    content = make_content()
+    content["diagnostics"][1]["evidence_needed"] = 'Response r1: ""'
+
+    found = problems(content)
+    assert any("visibility" in item and "r1" in item and "empty" in item for item in found)
+
+
+def test_non_empty_quoted_excerpt_still_passes() -> None:
+    content = make_content()
+    content["diagnostics"][1]["evidence_needed"] = 'Response r1: "Kasparro is a visibility tool." (start of the sentence)'
+
+    assert problems(content) == []

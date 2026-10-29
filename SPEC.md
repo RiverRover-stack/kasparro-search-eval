@@ -124,6 +124,9 @@ engine is judged on the same questions.
 
 **Grouping prompts.** Prompts 1–30 of the supplied run are labelled *branded* (the question names
 Kasparro) and 31–50 *unbranded* (`prompt-categories-v1`). This describes the question, not the answer.
+In the supplied run, prompts 26–30 carry the *branded* label but their text does not contain "Kasparro".
+The mapping stays frozen; the branded-engine diagnostic cites only answers to prompts whose text names
+the brand, and says how many branded-labelled prompts do not.
 Any other run or prompt is shown as *unmapped*.
 
 **Citations** are stored as they were returned, one row per occurrence. Analysis results currently

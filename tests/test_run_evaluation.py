@@ -35,7 +35,8 @@ def test_report_states_limits_and_seeded_defect_results(tmp_path: Path) -> None:
     checks = data["report_evidence_check"]
     assert checks["clean_problems"] == []
     assert all(checks["seeded_defects_flagged"].values())
-    assert len(checks["seeded_defects_flagged"]) == 4
+    assert len(checks["seeded_defects_flagged"]) == 5
+    assert "empty_quote" in checks["seeded_defects_flagged"]
 
 
 def test_score_arithmetic_has_no_mismatches(tmp_path: Path) -> None:

@@ -32,6 +32,8 @@ def check_report_evidence(content, results_by_response, answers_by_response) -> 
             for response_id, quote in QUOTE_LINE.findall(text):
                 if response_id not in item["evidence_response_ids"]:
                     problems.append(f"{section_id}: quoted excerpt cites {response_id}, which is not linked evidence")
+                elif not quote.strip():
+                    problems.append(f"{section_id}: quoted excerpt for {response_id} is empty")
                 elif quote not in answers_by_response.get(response_id, ""):
                     problems.append(
                         f"{section_id}: quoted excerpt not found in answer {response_id}: {quote[:60]!r}"

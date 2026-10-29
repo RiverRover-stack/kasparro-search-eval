@@ -56,7 +56,9 @@ with a reason.
    also scored 0 there. Eight cases is very small, and the labels are the owner's own.
 2. The second finding is misleading on the live run. Prompts 026 to 030 are labelled "branded" but do not
    name Kasparro, so Gemini's 22 of 30 is really 22 of 25, and two of the three answers cited do not show
-   the gap. Not fixed. The other open review items are in `known_issues` in the output file.
+   the gap. Fixed in the report: the second finding now cites only answers to prompts that name Kasparro and says
+   that 5 of 30 branded-labelled prompts do not. The frozen mapping is unchanged. The saved output file
+   was made again and lists only what remains.
 
 ## Left out, and why
 

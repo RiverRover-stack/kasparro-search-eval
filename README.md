@@ -96,7 +96,7 @@ final verdict.
 
 **Not done yet**
 - The real active hours. Only the owner can fill them in (`journey/dev-notes.md`). The slots are empty.
-- Known problems in the report text, listed in `evaluation/analysis-output.json` under `known_issues`.
+- Known problems that remain are listed in `evaluation/analysis-output.json` under `known_issues`.
   The second finding is the most important: it is misleading on the live run (see `docs/decision-note.md`).
 - Counting unique links in answers.
 - Resuming an analysis that stopped halfway.
