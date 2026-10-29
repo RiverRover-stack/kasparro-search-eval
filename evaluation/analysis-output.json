@@ -144,14 +144,14 @@
     "negative": 11,
     "notes": [
       "12 of 39 model calls failed (11 were rejected because the quoted text did not match the answer exactly). A failed call is not brand absence.",
-      "Only 1 of 27 valid model results recommended Kasparro. This may mean the model under-detects recommendations; on the 8-case held-out check only 5 of 8 cases gave a valid answer, and the model found 0 recommendations among them."
+      "Only 1 of 27 successful model results recommended Kasparro. This may mean the model under-detects recommendations; on the 8-case held-out check only 5 of 8 cases gave a valid answer, and the model found 0 recommendations among them."
     ]
   },
   "diagnostics": [
     {
       "id": "unbranded-name-rate",
       "title": "Kasparro is never named when the prompt does not name it",
-      "observed_pattern": "Across all engines, Kasparro was named in 0 of 60 answers to unbranded prompts (0%). By engine: ChatGPT 0 of 20; Gemini 0 of 20; Google AI Mode 0 of 20. Classification coverage: 60 valid, 0 failed, 0 skipped.",
+      "observed_pattern": "Across all engines, Kasparro was named in 0 of 60 answers to unbranded prompts (0%). By engine: ChatGPT 0 of 20; Gemini 0 of 20; Google AI Mode 0 of 20. Classification coverage: 60 successful, 0 failed, 0 skipped.",
       "possible_explanation": "Hypothesis, not verified: when a prompt does not contain the brand name, the engines may have no reason to name it. Engine behaviour and the chosen prompts cannot be told apart from this archive alone.",
       "evidence_needed": "Read the linked answers and list which brands each names instead. Repeat the same prompts with the name added, and compare name rates with their counts.\nOpening sentence of each linked answer. It shows what the engine said instead of naming Kasparro and proves absence only weakly; the exact count over the whole answer is what proves absence. The quotes prove the words are in the archive, not what they mean.\nResponse 0eb89a67-4548-4810-ba1c-1881a919823d: \"Enterprise software platforms can improve their visibility in ChatGPT answers, but there isn't a switch that guarantees inclusion.\"\nResponse 02c5ee8d-0ffe-4940-bf93-5793e7b01528: \"Fixing poor visibility in ChatGPT answers requires moving away from traditional keyword-based SEO and shifting toward **Generative Engine Optimization\" (start of the sentence)\nResponse 003061a9-6cdd-45a0-89c4-9a139020da4a: \"Yes, many low-effort AI \"brand platforms\" are little more than pre-packaged \"prompt hacks\" that become obsolete as AI models evolve, causing them to produce generic or inconsistent content over time.[](https://medium.com/@despindler/stop-asking-ai-for-answers-start-working-with-it-cc829f828ef8)\" (start of the sentence)",
       "uncertainty": "high",
@@ -164,21 +164,21 @@
     {
       "id": "branded-engine-gap",
       "title": "Gemini is furthest from the branded-prompt average",
-      "observed_pattern": "On branded prompts, Gemini named Kasparro in 22 of 30 answers (73%); all engines together named it in 72 of 90 (80%). Classification coverage for Gemini: 18 valid, 3 failed, 9 skipped.",
+      "observed_pattern": "On branded prompts, Gemini named Kasparro in 22 of 30 answers (73%); all engines together named it in 72 of 90 (80%). Classification coverage for Gemini: 18 successful, 3 failed, 9 skipped. 5 of 30 branded-labelled prompts do not contain the name Kasparro in the prompt text; the evidence below cites only prompts that do.",
       "possible_explanation": "Hypothesis, not verified: the engines may differ in how often they repeat a brand named in the prompt. With one archive and 30 branded answers for Gemini, a small gap can be chance.",
-      "evidence_needed": "Read the linked answers to see how each engine handles the named brand. Repeat the branded prompts and compare the gap with its counts.\nSentence from each linked Gemini answer that names Kasparro (or, if it does not, its opening sentence). The quotes prove the words are in the archive, not what they mean.\nResponse 00f943a2-5355-4205-a6e0-a3ce5de97c51: \"For small software companies operating on tight budgets and limited bandwidth, paying for dedicated AI recommendation tracking software is **rarely worth the\" (opening sentence; this answer does not name Kasparro; start of the sentence)\nResponse 136b8240-008c-46ff-b744-592c4d859e98: \"Kaspr is primarily available as a **self-serve platform**.\" (opening sentence; this answer does not name Kasparro)\nResponse 174932c6-7662-448c-8fb7-3217096c51ff: \"Yes, there are several robust alternatives to manual prompts for evaluating AI engine recommendations, tracking how brands or products appear in AI search engines, and managing testing at scale.\" (opening sentence; this answer does not name Kasparro)",
+      "evidence_needed": "Read the linked answers to see how each engine handles the named brand. Repeat the branded prompts and compare the gap with its counts.\nSentence from each linked Gemini answer that names Kasparro (or, if it does not, its opening sentence). The quotes prove the words are in the archive, not what they mean.\nResponse 136b8240-008c-46ff-b744-592c4d859e98: \"Kaspr is primarily available as a **self-serve platform**.\" (opening sentence; this answer does not name Kasparro)\nResponse 5beb2a32-6c6c-42d8-861c-9fc9680b9930: \"Whether **Kaspr** delivers actual results or is just marketing hype depends heavily on **where you are prospecting** and **what you expect the tool to do**.\" (opening sentence; this answer does not name Kasparro)\nResponse 8e7809fd-1b15-402f-98ec-ebc3a6eed6f9: \"Canceling **Kaspr** (assuming you mean the B2B contact data and LinkedIn prospecting tool) is **technically straightforward** and can be handled directly through your dashboard, but you have to watch out for **strict notice periods** to avoid getting billed for another\" (opening sentence; this answer does not name Kasparro; start of the sentence)",
       "uncertainty": "high",
       "evidence_response_ids": [
-        "00f943a2-5355-4205-a6e0-a3ce5de97c51",
         "136b8240-008c-46ff-b744-592c4d859e98",
-        "174932c6-7662-448c-8fb7-3217096c51ff"
+        "5beb2a32-6c6c-42d8-861c-9fc9680b9930",
+        "8e7809fd-1b15-402f-98ec-ebc3a6eed6f9"
       ]
     },
     {
       "id": "model-findings",
-      "title": "What the model found in the answers that name Kasparro",
-      "observed_pattern": "Of 27 valid model results, 26 mention Kasparro without recommending it and 1 recommend it. 11 describe it negatively (this overlaps the others). Coverage: 27 valid; 12 of 39 model calls failed; 33 answers were not sent.",
-      "possible_explanation": "Hypothesis, not verified: Only 1 of 27 valid model results recommended Kasparro. This may mean the model under-detects recommendations; on the 8-case held-out check only 5 of 8 cases gave a valid answer, and the model found 0 recommendations among them.",
+      "title": "What the classifier found in the answers it read (execution mode: rules+hosted_groq)",
+      "observed_pattern": "Of 27 successful model results, 26 mention Kasparro without recommending it and 1 recommend it. 11 describe it negatively (this overlaps the others). Coverage: 27 successful; 12 of 39 model calls failed; 33 answers were not sent.",
+      "possible_explanation": "Hypothesis, not verified: Only 1 of 27 successful model results recommended Kasparro. This may mean the model under-detects recommendations; on the 8-case held-out check only 5 of 8 cases gave a valid answer, and the model found 0 recommendations among them.",
       "evidence_needed": "A reviewer reads the linked answers and marks mention, recommendation and negative wording without seeing the model label. Compare with the model's counts.",
       "uncertainty": "high",
       "evidence_response_ids": [
@@ -209,7 +209,7 @@
       "id": "unbranded-coverage",
       "priority": 2,
       "title": "Study the prompts where Kasparro is not named",
-      "problem": "Kasparro is named in 0 of 60 answers to unbranded prompts. It is never named there, so the archive cannot show what the engines say instead.",
+      "problem": "Kasparro is named in 0 of 60 answers to unbranded prompts. It is never named there, so the linked answers show what the engines say instead, but the archive does not show why, or which brands the engines name across all answers.",
       "evidence_response_ids": [
         "003061a9-6cdd-45a0-89c4-9a139020da4a",
         "016fc85b-120b-46fe-958a-53724ad55363",
@@ -225,13 +225,13 @@
       "id": "review-recommendations",
       "priority": 3,
       "title": "Check recommendation counts by hand",
-      "problem": "Only 1 of 27 valid model results recommended Kasparro. The model may be missing recommendations, so this count should not be trusted yet.",
+      "problem": "Only 1 of 27 successful model results recommended Kasparro. The model may be missing recommendations, so this count should not be trusted yet.",
       "evidence_response_ids": [
         "71ec5309-af52-4071-af21-bd282ce41cce",
         "0f217f49-ee02-44ea-853d-61fbcc7a9895",
         "0f7ae466-5a77-42ce-9018-37f243f7d886"
       ],
-      "action": "A reviewer reads all 27 valid model-classified answers and marks which ones recommend Kasparro, without seeing the model label first.",
+      "action": "A reviewer reads all 27 successful model-classified answers and marks which ones recommend Kasparro, without seeing the model label first.",
       "expected_benefit": "Shows whether the recommendation count is too low before anyone relies on it.",
       "effort": "low",
       "uncertainty": "medium",
@@ -245,34 +245,10 @@
   "known_issues": [
     {
       "id": 1,
-      "issue": "Diagnostic 2 evidence is misleading on the live run. Prompts 026-030 are labelled 'branded' in the frozen prompt-categories-v1 mapping, but their text does not name Kasparro, so Gemini's 22 of 30 is really 22 of 25. Two of the three answers cited in diagnostic 2 show nothing about the gap."
+      "issue": "Prompts 026-030 are labelled 'branded' in the frozen prompt-categories-v1 mapping, but their text does not name Kasparro, so branded name rates cover 25 prompts that name it and 5 that do not. Diagnostic 2 cites only answers to prompts that name it and says so; the mapping itself is unchanged."
     },
     {
       "id": 2,
-      "issue": "The quote cutter can drop the brand name from a quote that is labelled as naming it. Not hit on the live data."
-    },
-    {
-      "id": 3,
-      "issue": "tools/check_report_evidence.py accepts an empty quote."
-    },
-    {
-      "id": 4,
-      "issue": "Remedy 2 says the archive cannot show what the engines say instead of Kasparro, but diagnostic 1 quotes the opening sentence of those answers."
-    },
-    {
-      "id": 5,
-      "issue": "Diagnostic 3's title says 'What the model found...', which is wrong for a plain stub run, where no model ran."
-    },
-    {
-      "id": 6,
-      "issue": "The word 'valid' in the coverage lines covers both answers settled by the literal rule and answers classified by the model."
-    },
-    {
-      "id": 7,
-      "issue": "Several tests are weak (see the reviewer lines in STATUS.md)."
-    },
-    {
-      "id": 8,
       "issue": "The freeze tools read the deleted classification.py and no longer run. tools/benchmark_model.py is not deleted."
     }
   ],

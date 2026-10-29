@@ -252,28 +252,34 @@
       "evidence_id_not_in_analysis": true,
       "failed_result_in_non_failure_section": true,
       "excerpt_not_in_answer": true,
-      "remedy_without_shared_evidence": true
+      "remedy_without_shared_evidence": true,
+      "empty_quote": true
     },
     "seeded_defect_problems": {
       "evidence_id_not_in_analysis": [
-        "visibility: evidence not-in-analysis is not in the analysis"
+        "branded-engine-gap: evidence not-in-analysis is not in the analysis",
+        "branded-engine-gap: quoted excerpt cites 136b8240-008c-46ff-b744-592c4d859e98, which is not linked evidence",
+        "branded-engine-gap: quoted excerpt cites 5beb2a32-6c6c-42d8-861c-9fc9680b9930, which is not linked evidence",
+        "branded-engine-gap: quoted excerpt cites 8e7809fd-1b15-402f-98ec-ebc3a6eed6f9, which is not linked evidence"
       ],
       "failed_result_in_non_failure_section": [
-        "visibility: evidence 003061a9-6cdd-45a0-89c4-9a139020da4a has status failed, not successful",
-        "engine-comparison: evidence 003061a9-6cdd-45a0-89c4-9a139020da4a has status failed, not successful",
-        "verify-evidence: evidence 003061a9-6cdd-45a0-89c4-9a139020da4a has status failed, not successful",
-        "repeat-sampling: evidence 003061a9-6cdd-45a0-89c4-9a139020da4a has status failed, not successful"
+        "branded-engine-gap: evidence 136b8240-008c-46ff-b744-592c4d859e98 has status failed, not successful"
       ],
       "excerpt_not_in_answer": [
-        "coverage: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
-        "visibility: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
-        "engine-comparison: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
-        "review-failures: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
-        "verify-evidence: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'",
-        "repeat-sampling: excerpt for 003061a9-6cdd-45a0-89c4-9a139020da4a not found in answer: 'text that is not in the answer'"
+        "branded-engine-gap: excerpt for 136b8240-008c-46ff-b744-592c4d859e98 not found in answer: 'text that is not in the answer'"
       ],
       "remedy_without_shared_evidence": [
-        "verify-evidence: remedy shares no evidence with any diagnostic"
+        "unbranded-name-rate: quoted excerpt cites 0eb89a67-4548-4810-ba1c-1881a919823d, which is not linked evidence",
+        "unbranded-name-rate: quoted excerpt cites 02c5ee8d-0ffe-4940-bf93-5793e7b01528, which is not linked evidence",
+        "unbranded-name-rate: quoted excerpt cites 003061a9-6cdd-45a0-89c4-9a139020da4a, which is not linked evidence",
+        "branded-engine-gap: quoted excerpt cites 5beb2a32-6c6c-42d8-861c-9fc9680b9930, which is not linked evidence",
+        "branded-engine-gap: quoted excerpt cites 8e7809fd-1b15-402f-98ec-ebc3a6eed6f9, which is not linked evidence",
+        "review-failures: remedy shares no evidence with any diagnostic",
+        "unbranded-coverage: remedy shares no evidence with any diagnostic",
+        "review-recommendations: remedy shares no evidence with any diagnostic"
+      ],
+      "empty_quote": [
+        "unbranded-name-rate: quoted excerpt for 0eb89a67-4548-4810-ba1c-1881a919823d is empty"
       ]
     }
   },

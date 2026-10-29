@@ -117,3 +117,4 @@ Independent function (absent 0, mentioned 25, recommended 100) versus `visibilit
 - Seeded defect `failed_result_in_non_failure_section` flagged: True
 - Seeded defect `excerpt_not_in_answer` flagged: True
 - Seeded defect `remedy_without_shared_evidence` flagged: True
+- Seeded defect `empty_quote` flagged: True

@@ -29,55 +29,20 @@ LIVE_DATABASE = ROOT / "backend" / "live-run.db"
 LIVE_ANALYSIS_ID = "f93000a1-5b97-4146-a72d-6fecb9f1f160"
 OUTPUT_PATH = ROOT / "evaluation" / "analysis-output.json"
 
-# Open problems found in review. They are listed, not fixed. The owner decides what to do.
+# Open problems that remain. Earlier review items (D2 evidence, quote cutter, empty quote, remedy 2,
+# D3 title, "valid" wording, weak tests) are fixed in code; see STATUS.md.
 KNOWN_ISSUES = [
     {
         "id": 1,
         "issue": (
-            "Diagnostic 2 evidence is misleading on the live run. Prompts 026-030 are labelled "
-            "'branded' in the frozen prompt-categories-v1 mapping, but their text does not name "
-            "Kasparro, so Gemini's 22 of 30 is really 22 of 25. Two of the three answers cited in "
-            "diagnostic 2 show nothing about the gap."
+            "Prompts 026-030 are labelled 'branded' in the frozen prompt-categories-v1 mapping, but "
+            "their text does not name Kasparro, so branded name rates cover 25 prompts that name it "
+            "and 5 that do not. Diagnostic 2 cites only answers to prompts that name it and says so; "
+            "the mapping itself is unchanged."
         ),
     },
     {
         "id": 2,
-        "issue": (
-            "The quote cutter can drop the brand name from a quote that is labelled as naming it. "
-            "Not hit on the live data."
-        ),
-    },
-    {
-        "id": 3,
-        "issue": "tools/check_report_evidence.py accepts an empty quote.",
-    },
-    {
-        "id": 4,
-        "issue": (
-            "Remedy 2 says the archive cannot show what the engines say instead of Kasparro, but "
-            "diagnostic 1 quotes the opening sentence of those answers."
-        ),
-    },
-    {
-        "id": 5,
-        "issue": (
-            "Diagnostic 3's title says 'What the model found...', which is wrong for a plain stub "
-            "run, where no model ran."
-        ),
-    },
-    {
-        "id": 6,
-        "issue": (
-            "The word 'valid' in the coverage lines covers both answers settled by the literal rule "
-            "and answers classified by the model."
-        ),
-    },
-    {
-        "id": 7,
-        "issue": "Several tests are weak (see the reviewer lines in STATUS.md).",
-    },
-    {
-        "id": 8,
         "issue": (
             "The freeze tools read the deleted classification.py and no longer run. "
             "tools/benchmark_model.py is not deleted."
