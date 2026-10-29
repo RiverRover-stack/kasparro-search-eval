@@ -13,6 +13,11 @@ input pack -> validated source records -> bounded classifier attempts
                                   +-> analyst edit -> draft v2 -> fresh review required
 ```
 
+A run can mix classifiers. A literal rule handles answers that do not contain the brand name, a hosted
+model handles a fixed sample of the rest, and every other response is skipped with a reason. A provider
+daily-quota error stops the run as `interrupted` and no report can be built from it. Each attempt records
+its own execution mode.
+
 Reports do not rewrite analysis results. A report version stores a content hash, summary, exactly
 three diagnostics, and exactly three remedies. Separate evidence-link rows connect every diagnostic
 and remedy to persisted response results from the same analysis. Diagnostic explanations are labeled

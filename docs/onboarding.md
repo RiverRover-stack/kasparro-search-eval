@@ -81,11 +81,26 @@ retries on local contract validation. Groq is therefore not accepted for the ful
 
 ## Full hosted-run readiness
 
-The API request is ready but has not been executed. A sequential 150-response run paced near the
-observed 8,000-token-per-minute limit would take at least about 75 minutes at 30 seconds between
-responses, and a practical estimate is 75–90 minutes plus any provider retry waits. The call sends all
-150 archived answer texts to Groq. Obtain explicit user approval for that external disclosure and cost
-before running it, even if a future provider passes the quality gate.
+The free plan allows 8,000 tokens per minute and 200,000 per day, so all 150 answers cannot be sent in one
+day. The supported path is a mixed run on a fixed sample: answers without the brand name are handled by a
+rule, 39 mention answers (13 per engine) go to Groq, and the rest are skipped with a reason. First print
+the plan, which sends nothing:
+
+```powershell
+py -3 tools\run_live_analysis.py
+```
+
+Sending needs your explicit approval, because 39 archived answers leave the machine. Use a fresh database;
+the old `backend/kasparro.db` refuses the pack import (probably created before the pack hash included
+provenance):
+
+```powershell
+py -3 tools\run_live_analysis.py --confirm-send --database-url sqlite:///backend/live-run.db
+```
+
+It prints nothing for about 25 minutes, then a summary, and writes `evaluation/live-run-groq-sample.json`
+(it will not overwrite an existing file). A daily-quota error stops the run as `interrupted`. The older
+single-request path below sends the whole dataset in one HTTP call and is not suitable for the free plan.
 
 ```powershell
 $analystHeaders = @{ Authorization = "Bearer $env:KASPARRO_ANALYST_TOKEN" }
