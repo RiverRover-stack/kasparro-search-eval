@@ -331,6 +331,18 @@ def edit_report(
     report = session.get(Report, report_id)
     if report is None:
         raise ReportServiceError(404, "report_not_found", f"Report {report_id} was not found")
+    original = session.scalar(
+        select(ReportVersion)
+        .where(ReportVersion.report_id == report_id)
+        .order_by(ReportVersion.version_number)
+        .limit(1)
+    )
+    if original is None:
+        raise ReportServiceError(500, "report_state_invalid", "Original report version is missing")
+    if content.summary != original.content.get("summary"):
+        raise ReportServiceError(
+            422, "computed_summary_immutable", "Computed report summary cannot be edited"
+        )
     next_number = (session.scalar(select(func.max(ReportVersion.version_number)).where(ReportVersion.report_id == report.id)) or 0) + 1
     content_data = content.model_dump(mode="json")
     version = ReportVersion(

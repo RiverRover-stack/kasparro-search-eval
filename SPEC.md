@@ -105,3 +105,7 @@ version. Analyst and reviewer identities come from separate environment-provided
 Report content, evidence links, decisions, comments, actors, timestamps, hashes, and audit events are
 persisted. Credentials are never stored in those records or exports.
 
+Report edits may revise narrative sections but must retain the original computed summary exactly.
+Attempts to alter it return `422` with code `computed_summary_immutable`. This preserves the scores
+and coverage snapshot; classification correction and recomputation remain unimplemented.
+

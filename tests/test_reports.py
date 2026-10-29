@@ -151,3 +151,17 @@ def test_report_rejects_foreign_evidence_reference(
             edit_report(session, report.report_id, content, "analyst", "request-edit")
         assert caught.value.status_code == 422
         assert caught.value.code == "invalid_evidence_reference"
+
+
+def test_report_rejects_changed_computed_summary(session_factory: sessionmaker[Session]) -> None:
+    with session_factory() as session:
+        dataset = import_pack(session, ROOT)
+        analysis = execute_analysis(session, dataset.dataset_id, ControlledStubClassifier(), 20_000)
+        report = create_report(session, analysis.analysis_id, "analyst", "request-create")
+        content = report.current_version.content.model_copy(deep=True)
+        content.summary["aggregate"]["average_visibility_score"] = 100
+        with pytest.raises(ReportServiceError) as caught:
+            edit_report(session, report.report_id, content, "analyst", "request-edit")
+        assert caught.value.code == "computed_summary_immutable"
+        assert get_report(session, report.report_id).current_version_id == report.current_version_id
+        assert session.scalar(select(func.count()).select_from(ReportVersion)) == 1
