@@ -43,8 +43,9 @@ and what should be checked or changed next?
 - **Roles are enforced by secret keys on the server.** Typing "I am the reviewer" does nothing.
 - **Every number shows its totals.** An average always comes with how many answers succeeded, failed or
   were skipped.
-- **The final test cases were locked.** Eight test answers were set aside and never used to improve the
-  model, so the final check is fair.
+- **The final test cases were locked.** Eight test answers were set aside and not used to tune the model or
+  the prompt, so the final check is fair. One of them, the longest answer, was only used to check whether a
+  small local model could read it at all (see `evaluation/benchmark-results.md`).
 
 ## What it does not claim
 
@@ -57,7 +58,7 @@ and what should be checked or changed next?
 
 | Check | Result |
 |---|---|
-| Automated tests | 135 pass |
+| Automated tests | 151 pass |
 | AI model on the 8 locked test cases | 5 gave a valid answer, 4 were fully correct, 3 failed to produce a valid answer. It missed the one "recommended" case. |
 | A simple keyword rule on the same 8 cases | 4 fully correct. It ties the model on this count, but it is weaker at spotting criticism. |
 | Score arithmetic | 28 checks, no mistakes |
@@ -137,12 +138,12 @@ Set `execution_mode` in the analysis request.
 
 - `stub`: no model and no internet. It proves the app works (import, scoring, review, export). It says
   nothing about model quality.
-- `replay`: plays back saved model answers sent in the request. `py -3 toolsun_evaluation.py` does the
+- `replay`: plays back saved model answers sent in the request. `py -3 tools\run_evaluation.py` does the
   same with the saved real-model results in `evaluation/`, with no internet and no key. Model-quality
   numbers from it are single-run and unverified.
 - `hosted_groq`: the real model. Put `GROQ_API_KEY=...` and `KASPARRO_GROQ_MODEL=openai/gpt-oss-120b` in
   `.env`. Without the key the API returns 422; it never switches model on its own.
-  `py -3 toolsun_live_analysis.py` only prints a plan. Sending needs `--confirm-send`, and it takes
+  `py -3 tools\run_live_analysis.py` only prints a plan. Sending needs `--confirm-send`, and it takes
   about 25 minutes because of the free plan's limits (see `docs/onboarding.md`).
 - `local_ollama`: a local model. Downloading it first can take a while.
 
