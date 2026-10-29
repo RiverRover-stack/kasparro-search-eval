@@ -53,6 +53,7 @@ def test_visibility_score(classification: ClassificationResult, expected: int) -
     assert visibility_score(classification) == expected
 
 
+# regression for the 28 Oct 2026 gemma3 failure (journey/dev-notes.md)
 def test_fabricated_excerpt_is_rejected() -> None:
     classification = result(
         brand_mentioned=True,
@@ -68,6 +69,7 @@ def test_recommendation_requires_mention() -> None:
         result(recommended=True)
 
 
+# regression for the 28 Oct 2026 gemma3 failure (journey/dev-notes.md)
 def test_mention_must_agree_with_archived_text() -> None:
     classification = result(brand_mentioned=True)
 
