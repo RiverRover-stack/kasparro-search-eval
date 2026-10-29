@@ -57,7 +57,7 @@ and what should be checked or changed next?
 
 | Check | Result |
 |---|---|
-| Automated tests | 94 pass |
+| Automated tests | 135 pass |
 | AI model on the 8 locked test cases | 5 gave a valid answer, 4 were fully correct, 3 failed to produce a valid answer. It missed the one "recommended" case. |
 | A simple keyword rule on the same 8 cases | 4 fully correct. It ties the model on this count, but it is weaker at spotting criticism. |
 | Score arithmetic | 28 checks, no mistakes |
@@ -76,16 +76,28 @@ final verdict.
 - Report versions, editing, review, and approved-only export.
 - A test that compares the AI model with the simple keyword rule.
 
+- Setup notes in `.env.example`, and a copy-paste walk-through of the whole review flow (see "Try the
+  whole review flow"). It was run for real on 2026-10-29 against a local server in stub mode with a
+  throw-away database. The two steps that should fail did: export before approval gave 409, and the
+  analyst trying to approve gave 403.
+- `evaluation/analysis-output.json` (scores with coverage, 3 findings, 3 next steps, open problems) and
+  `docs/decision-note.md`.
+
 - A live run of the AI model on a sample of 39 answers. The free plan's daily limit is too small for all
   150, so the other answers are marked "skipped" with a reason. 12 of the 39 failed because the model
   did not follow the required answer format. Failures are shown, never counted as zero.
 
+- A report writer that uses the real results. It shows how often the name appears (all 150 answers)
+  apart from what the AI model found, with the failed and skipped counts next to each number. The report no longer repeats the blended average. It is
+  built and tested but still waiting for review.
+
 **In progress**
-- Nothing is running. The next step is a report writer that says where Kasparro wins or loses.
+- Nothing is running.
 
 **Not done yet**
-- The report writer is basic. It describes how the analysis went but does not yet say where Kasparro wins
-  or loses. Fixing this is the next planned step.
+- The real active hours. Only the owner can fill them in (`journey/dev-notes.md`). The slots are empty.
+- Known problems in the report text, listed in `evaluation/analysis-output.json` under `known_issues`.
+  The second finding is the most important: it is misleading on the live run (see `docs/decision-note.md`).
 - Counting unique links in answers.
 - Resuming an analysis that stopped halfway.
 
@@ -100,6 +112,8 @@ py -3 -m pip install -e ".[dev]"
 py -3 tools\check_pack.py        # checks the input data is intact
 py -3 -m pytest -q               # runs all tests, no internet needed
 py -3 tools\run_evaluation.py    # model vs keyword rule comparison, no internet needed
+py -3 tools\export_analysis_output.py   # rebuilds evaluation/analysis-output.json from the saved live-run
+                                         # database (backend\live-run.db, not in Git); will not overwrite a file
 ```
 
 To start the web service and see its documentation page:
@@ -110,8 +124,85 @@ $env:KASPARRO_REVIEWER_TOKEN = "choose-another-secret"
 py -3 -m uvicorn backend.app.main:app
 ```
 
-Then open `http://127.0.0.1:8000/docs`. Step by step request examples are in
-[`docs/onboarding.md`](docs/onboarding.md).
+Then open `http://127.0.0.1:8000/docs`. More notes are in [`docs/onboarding.md`](docs/onboarding.md).
+
+Instead of typing the two secrets each time, you can copy `.env.example` to `.env` and fill them in.
+`.env` is never committed. `.env.example` lists every setting, with the secrets left blank.
+
+## Try the whole review flow
+
+This walk-through uses the built-in **stub** mode. It sends nothing over the internet and needs no AI
+key. The stub gives made-up results, so it only shows that the steps work. It does not show how good the
+model is.
+
+**Window 1.** Start the server with two secrets of your choice. Use a throw-away database file so you do
+not touch your real one.
+
+```powershell
+$env:KASPARRO_ANALYST_TOKEN = "choose-a-secret"
+$env:KASPARRO_REVIEWER_TOKEN = "choose-another-secret"
+$env:KASPARRO_DATABASE_URL = "sqlite:///backend/demo.db"
+py -3 -m uvicorn backend.app.main:app
+```
+
+**Window 2.** Set the same two secrets, then run the steps below one block at a time, from this folder.
+
+```powershell
+$env:KASPARRO_ANALYST_TOKEN = "choose-a-secret"
+$env:KASPARRO_REVIEWER_TOKEN = "choose-another-secret"
+$base = "http://127.0.0.1:8000"
+$analyst = @{ Authorization = "Bearer $env:KASPARRO_ANALYST_TOKEN" }
+$reviewer = @{ Authorization = "Bearer $env:KASPARRO_REVIEWER_TOKEN" }
+$json = "application/json"
+
+# 1. Load the 150 answers (analyst only).
+$dataset = Invoke-RestMethod -Method Post -Headers $analyst "$base/datasets"
+
+# 2. Check every answer. "stub" means no model and no internet.
+$body = @{ dataset_id = $dataset.dataset_id; execution_mode = "stub" } | ConvertTo-Json
+$analysis = Invoke-RestMethod -Method Post -Headers $analyst -ContentType $json -Body $body "$base/analyses"
+
+# 3. Build the report. It starts as version 1, a draft.
+$body = @{ analysis_id = $analysis.analysis_id } | ConvertTo-Json
+$report = Invoke-RestMethod -Method Post -Headers $analyst -ContentType $json -Body $body "$base/reports"
+$id = $report.report_id
+
+# 4. The analyst submits version 1. Submitting freezes it.
+$body = @{ version_id = $report.current_version_id } | ConvertTo-Json
+$report = Invoke-RestMethod -Method Post -Headers $analyst -ContentType $json -Body $body "$base/reports/$id/submit"
+
+# 5. Nobody can export yet. This should fail with 409.
+try { Invoke-RestMethod -Headers $analyst "$base/reports/$id/export" } catch { $_.Exception.Response.StatusCode.value__ }
+
+# 6. The reviewer rejects version 1. A comment is required.
+$body = @{ version_id = $report.current_version_id; decision = "rejected"; comment = "Please check the wording." } | ConvertTo-Json
+$report = Invoke-RestMethod -Method Post -Headers $reviewer -ContentType $json -Body $body "$base/reports/$id/decision"
+
+# 7. The analyst edits. This makes version 2, a new draft. Version 1 stays as it was.
+$content = $report.current_version.content
+$content.diagnostics[0].possible_explanation += " Wording checked against the answers."
+$body = @{ content = $content } | ConvertTo-Json -Depth 20
+$report = Invoke-RestMethod -Method Patch -Headers $analyst -ContentType $json -Body $body "$base/reports/$id"
+
+# 8. The analyst submits version 2.
+$body = @{ version_id = $report.current_version_id } | ConvertTo-Json
+$report = Invoke-RestMethod -Method Post -Headers $analyst -ContentType $json -Body $body "$base/reports/$id/submit"
+
+# 9. Wrong role: the analyst tries to approve. This should fail with 403.
+$body = @{ version_id = $report.current_version_id; decision = "approved"; comment = "I approve my own work." } | ConvertTo-Json
+try { Invoke-RestMethod -Method Post -Headers $analyst -ContentType $json -Body $body "$base/reports/$id/decision" } catch { $_.Exception.Response.StatusCode.value__ }
+
+# 10. The reviewer approves version 2.
+$body = @{ version_id = $report.current_version_id; decision = "approved"; comment = "Evidence checked." } | ConvertTo-Json
+$report = Invoke-RestMethod -Method Post -Headers $reviewer -ContentType $json -Body $body "$base/reports/$id/decision"
+
+# 11. Now the approved version can be exported.
+Invoke-RestMethod -Headers $analyst "$base/reports/$id/export" | ConvertTo-Json -Depth 20
+```
+
+Each edit makes a new version, and a decision belongs to one exact version. If you edit again after
+approval, the new draft cannot be exported until it is submitted and approved too. Press Ctrl+C in
+window 1 to stop the server.
 
 ## Built with AI help
 
@@ -125,4 +216,6 @@ test results.
 - [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md): what is finished and what is left.
 - [`docs/adr/`](docs/adr/): the reasons behind the main design choices.
 - [`journey/`](journey/): dated notes on how the project developed, including what went wrong.
+- [`docs/decision-note.md`](docs/decision-note.md): the main choices, the biggest risks and what was left out.
+- [`evaluation/analysis-output.json`](evaluation/analysis-output.json): the live-run numbers, findings and open problems.
 - [`evaluation/comparison-report.md`](evaluation/comparison-report.md): the full model-versus-rule results.

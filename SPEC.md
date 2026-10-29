@@ -78,7 +78,14 @@ text is real, not that the model understood it.
 
 **Report.** One draft per finished analysis, built by plain code from the stored results: exactly
 three diagnostics and three remedies, each linked to specific response results. The model is used
-for classification only.
+for classification only. The summary holds two separate number blocks, never blended: how often the
+name appears over all answers (by engine and by branded/unbranded prompt), and the model's results on
+the answers it classified, with valid, failed and skipped counts beside each number. The three
+diagnostics are one per kind of finding: unbranded prompts (all engines together, with the per-engine
+split), branded prompts (the engine furthest from the branded average) and what the model found on its own
+answers. Each remedy states its problem. A new report summary holds only these two blocks and its
+metadata: it does not repeat the blended average (older saved versions keep what they stored). See
+`docs/adr/0006-findings-generator.md` (proposed, awaiting owner review).
 
 **Review.** See section 5.
 

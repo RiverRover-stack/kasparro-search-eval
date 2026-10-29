@@ -23,7 +23,7 @@ next step without approval.
 | Analyst-only import and analysis | Done (Step 2b) |
 | Reviewer comment on every decision | Done (Step 2b) |
 | Health endpoint, API docs | Done |
-| Required backend tests (invalid input, duplicates, timeout/malformed, wrong role, rejection blocks export, edit after approval) | Done at service level; route wiring checked in `tests/test_auth.py`. No live-HTTP wrong-role test, because `TestClient` hangs here (verify manually in Step 5) |
+| Required backend tests (invalid input, duplicates, timeout/malformed, wrong role, rejection blocks export, edit after approval) | Done at service level; route wiring checked in `tests/test_auth.py`. No automated HTTP wrong-role test, because `TestClient` hangs here. Checked by hand over live Uvicorn in Step 5 (analyst deciding gave 403) |
 | Malformed bodies and unknown routes return the structured error | **Gap:** framework default body, no `code` |
 | Unique-link counting with the stated de-duplication rule | **Not implemented** (only a citations-present flag) |
 | 8+ hand-labelled cases + 2 edge cases, split dev/held-out | Done (`evaluation/labels-v1.json`) |
@@ -85,15 +85,19 @@ limit seen in development. Re-measure in 3a; do not reuse that number.
 
 ### Step 4: Evaluation you can rerun. Built, awaiting commit
 Done: baseline (`tools/rule_baseline.py`), report evidence checker (`tools/check_report_evidence.py`),
-one command (`tools/run_evaluation.py`), regression tests, 94 tests pass. Changed from the plan below:
+one command (`tools/run_evaluation.py`), regression tests, 94 tests passed at that point. Changed from the plan below:
 metric code is imported from `tools/benchmark_held_out.py`, not moved, because that file's hash is frozen.
 
-**Step 4b (approved, not started): a real findings generator.** Today's report text is generic
-pipeline wording, and its evidence is the first three responses in database order, not tied to any claim.
-It does not answer "where does Kasparro win or lose". The step would group results by engine and by
-branded/unbranded prompt, choose the three clearest wins or losses, attach stored excerpts and response IDs,
-and derive the three remedies from them. It changes report content and needs the real live-run results, so it starts after Step 3c finishes, and the
-design is shown to you before any code is written.
+**Step 4b (built 2026-10-29, awaiting your review and commit): a real findings generator.** Built as
+`backend/app/findings.py`; see `docs/adr/0006-findings-generator.md`. Diagnostics are one per kind
+(unbranded prompts, the branded-prompt engine furthest from the branded average, the model's own
+findings); the owner approved this rule on 2026-10-29. The ADR is still proposed, awaiting owner review.
+The original problem was that the report text was generic pipeline wording, and its evidence was the
+first three responses in database order, not tied to any claim, so it did not answer "where does
+Kasparro win or lose". The original plan was to group results by engine and by branded/unbranded
+prompt, choose the three clearest wins or losses, attach stored excerpts and response IDs, and derive
+the three remedies from them. It changes report content and needed the real live-run results, so it
+started after Step 3c finished.
 
 Requirements added by the live run: the report must not use the blended average (78 absent answers are
 all in it, but only 27 of 72 mention answers). It must state the exact absence count over all 150, show
@@ -113,11 +117,12 @@ The original wording of Step 4 follows.
 Done when: one command regenerates the report and the new tests pass.
 
 ### Step 5: Submission pack
-- [ ] `.env.example` with every variable in `config.py` and blank secrets.
-- [ ] `README.md`: setup, database start, test and evaluation commands, and PowerShell requests for
+- [x] `.env.example` with every variable in `config.py` and blank secrets. Done 2026-10-29 (with a test).
+- [x] `README.md`: setup, database start, test and evaluation commands, and PowerShell requests for
   analyse → edit → submit → reject → edit → submit → approve → export, plus a wrong-role denial.
-- [ ] `evaluation/analysis-output.json`: scores and coverage, the 3 diagnostics, the 3 remedies, active time.
-- [ ] `docs/decision-note.md` (about one page): scoring and aggregation, review design, alternatives,
+  Run for real against local Uvicorn in stub mode on 2026-10-29 (not run with Groq).
+- [x] `evaluation/analysis-output.json`: scores and coverage, the 3 diagnostics, the 3 remedies, active time. Built by `tools/export_analysis_output.py`; `active_time` is null until the owner supplies hours.
+- [x] `docs/decision-note.md` (about one page): scoring and aggregation, review design, alternatives,
   top remedy, the failure and fix, biggest risk, omissions, questions before release, AI assistance.
 - [ ] Active-time log in `journey/dev-notes.md`. The owner supplies real hours; nothing is guessed.
 

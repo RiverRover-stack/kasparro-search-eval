@@ -7,4 +7,5 @@ backend/*.db-*
 .env
 docs/PROJECT.md
 docs/AI_CONTEXT.md
+docs/HANDOFF_PROMPT.md
 
