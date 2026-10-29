@@ -403,6 +403,8 @@ def decide_report(
         raise ReportServiceError(409, "version_not_submitted", "Only a submitted version can be decided")
     if decision not in {"approved", "rejected"}:
         raise ReportServiceError(422, "invalid_decision", "Decision must be approved or rejected")
+    if not comment or not comment.strip():
+        raise ReportServiceError(422, "comment_required", "A reviewer comment is required")
     version.status = decision
     version.decision = ReviewDecision(
         report_version_id=version.id,

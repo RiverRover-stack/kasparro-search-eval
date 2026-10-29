@@ -165,3 +165,22 @@ def test_report_rejects_changed_computed_summary(session_factory: sessionmaker[S
         assert caught.value.code == "computed_summary_immutable"
         assert get_report(session, report.report_id).current_version_id == report.current_version_id
         assert session.scalar(select(func.count()).select_from(ReportVersion)) == 1
+
+
+@pytest.mark.parametrize("comment", [None, "", "   "])
+def test_decision_requires_a_reviewer_comment(
+    session_factory: sessionmaker[Session], comment: str | None
+) -> None:
+    with session_factory() as session:
+        dataset = import_pack(session, ROOT)
+        analysis = execute_analysis(session, dataset.dataset_id, ControlledStubClassifier(), 20_000)
+        report = create_report(session, analysis.analysis_id, "analyst", "request-create")
+        submit_report(session, report.report_id, report.current_version_id, "analyst", "request-submit")
+        with pytest.raises(ReportServiceError) as caught:
+            decide_report(
+                session, report.report_id, report.current_version_id, "approved", comment,
+                "reviewer", "request-decide",
+            )
+        assert caught.value.status_code == 422
+        assert caught.value.code == "comment_required"
+        assert get_report(session, report.report_id).current_version.status == "submitted"

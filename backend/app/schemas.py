@@ -159,7 +159,7 @@ class ReportSubmitRequest(BaseModel):
 class ReportDecisionRequest(BaseModel):
     version_id: str
     decision: Literal["approved", "rejected"]
-    comment: str | None = None
+    comment: str = Field(min_length=1)
 
 
 class ReviewDecisionView(BaseModel):
