@@ -9,7 +9,7 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .classification import Classifier, visibility_score
+from .classification import Classifier, ProviderQuotaExhausted, visibility_score
 from .models import (
     AnalysisRun,
     CitationRecord,
@@ -66,7 +66,9 @@ def execute_analysis(
     dataset_id: str,
     classifier: Classifier,
     max_input_chars: int,
+    skip_reasons: dict[str, str] | None = None,
 ) -> AnalysisView:
+    skip_reasons = skip_reasons or {}
     dataset = session.get(Dataset, dataset_id)
     if dataset is None:
         raise AnalysisNotFoundError(f"Dataset {dataset_id} was not found")
@@ -98,14 +100,16 @@ def execute_analysis(
         session.commit()
 
         for response in responses:
-            if len(response.answer_text) > max_input_chars:
+            skip_reason = skip_reasons.get(response.id)
+            if skip_reason is not None or len(response.answer_text) > max_input_chars:
                 result_record = ResponseClassificationRecord(
                     analysis_run_id=run.id,
                     response_id=response.id,
                     prompt_id=response.prompt_id,
                     engine=response.engine,
                     status="skipped",
-                    reason=(
+                    reason=skip_reason
+                    or (
                         f"oversized_input: {len(response.answer_text)} characters exceeds "
                         f"the {max_input_chars} character limit"
                     ),
@@ -120,6 +124,11 @@ def execute_analysis(
 
             try:
                 outcome = classifier.classify(response.answer_text, response.id)
+            except ProviderQuotaExhausted:
+                run.status = "interrupted"
+                run.finished_at = utc_now()
+                session.commit()
+                return get_analysis(session, run.id)
             except Exception as exc:  # adapter failures become explicit response failures
                 outcome = None
                 failure_reason = f"adapter_error: {type(exc).__name__}: {exc}"
