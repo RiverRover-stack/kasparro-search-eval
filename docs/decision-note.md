@@ -71,7 +71,11 @@ Unique-link counting is not built either. The model was not run on all 150 answe
 - Keep the frozen prompt labels and change finding 2, or approve a new mapping?
 - Does a person reading the 27 valid answers find more recommendations than the model did?
 - Is a new freeze with sentence numbers worth the cost?
-- What were the real active hours? **Owner to supply; not filled in here.**
+
+## Active time
+
+11 hours in total, as reported by the owner. This includes testing, development and review, and the time
+spent on the model API calls. The same figure is in `evaluation/analysis-output.json`.
 
 ## AI assistance
 
