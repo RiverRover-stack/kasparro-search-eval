@@ -143,9 +143,48 @@ Set `execution_mode` in the analysis request.
   numbers from it are single-run and unverified.
 - `hosted_groq`: the real model. Put `GROQ_API_KEY=...` and `KASPARRO_GROQ_MODEL=openai/gpt-oss-120b` in
   `.env`. Without the key the API returns 422; it never switches model on its own.
-  `py -3 tools\run_live_analysis.py` only prints a plan. Sending needs `--confirm-send`, and it takes
-  about 25 minutes because of the free plan's limits (see `docs/onboarding.md`).
-- `local_ollama`: a local model. Downloading it first can take a while.
+  `py -3 tools\run_live_analysis.py` only prints a plan. Sending needs `--confirm-send`, and the
+  recorded run took about 35 minutes (2,104 s) because of the free plan's limits (see `docs/onboarding.md`).
+- `local_ollama`: a local model (`gemma3:4b`). Download it first with `ollama pull gemma3:4b`; it is a few
+  gigabytes, so the time depends on your connection. It failed the development checks, so it is not the
+  evaluated model.
+
+**Replay request.** `replay_results` maps a response ID (from `data/responses.jsonl`) to one saved result.
+Any response without an entry is recorded as `failed`, never as brand absence.
+
+```json
+{
+  "dataset_id": "<id from POST /datasets>",
+  "execution_mode": "replay",
+  "replay_results": {
+    "<response_id>": {
+      "contract_version": "classification-v1",
+      "brand_mentioned": false,
+      "recommended": false,
+      "negative_characterization": false,
+      "competitors": [],
+      "observable_position": null,
+      "supporting_excerpts": [],
+      "uncertainty": "low",
+      "uncertainty_reason": "Kasparro is not named in this answer."
+    }
+  }
+}
+```
+
+**Database.** There is no separate setup step. The SQLite file (default `backend/kasparro.db`; change it
+with `KASPARRO_DATABASE_URL`) and its tables are created the first time the server starts
+(`initialize_database()` in `backend/app/database.py`). `POST /datasets` then loads the pack into it.
+
+**How long setup takes.** Creating the venv, installing, `check_pack.py` and the tests took a few minutes in
+the author's runs (the test suite itself about 25 seconds). It has not been timed from a cold start. Stub and
+replay need no download. Only `local_ollama` needs a model download (see above). The Groq live sample is
+the long step (about 35 minutes), and it is optional.
+
+**Controlled fixture.** The deterministic `ControlledStubClassifier` (the `stub` mode) is the controlled
+fixture for the engineering tests. The two clearly marked synthetic edge cases are in
+`evaluation/labels-v1.json` under `synthetic_cases`. The supplied `fixtures/failure_scenarios.json` is not
+used by the tests.
 
 Instead of typing the two secrets each time, you can copy `.env.example` to `.env` and fill them in.
 `.env` is never committed. `.env.example` lists every setting, with the secrets left blank.

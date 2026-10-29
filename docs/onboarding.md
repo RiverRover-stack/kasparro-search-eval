@@ -98,7 +98,7 @@ provenance):
 py -3 tools\run_live_analysis.py --confirm-send --database-url sqlite:///backend/live-run.db
 ```
 
-It prints nothing for about 25 minutes, then a summary, and writes `evaluation/live-run-groq-sample.json`
+It prints nothing for about 35 minutes, then a summary, and writes `evaluation/live-run-groq-sample.json`
 (it will not overwrite an existing file). A daily-quota error stops the run as `interrupted`. The older
 single-request path below sends the whole dataset in one HTTP call and is not suitable for the free plan.
 
