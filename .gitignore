@@ -8,4 +8,4 @@ backend/*.db-*
 docs/PROJECT.md
 docs/AI_CONTEXT.md
 docs/HANDOFF_PROMPT.md
-
+journey/
