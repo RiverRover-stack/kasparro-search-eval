@@ -82,7 +82,19 @@ wording; read them with this scope.
 Note: earlier docs estimated 75–90 minutes at a 30-second gap, based on an 8,000 tokens-per-minute
 limit seen in development. Re-measure in 3a; do not reuse that number.
 
-### Step 4: Evaluation you can rerun
+### Step 4: Evaluation you can rerun. Built, awaiting commit
+Done: baseline (`tools/rule_baseline.py`), report evidence checker (`tools/check_report_evidence.py`),
+one command (`tools/run_evaluation.py`), regression tests, 94 tests pass. Changed from the plan below:
+metric code is imported from `tools/benchmark_held_out.py`, not moved, because that file's hash is frozen.
+
+**Step 4b (approved, not started): a real findings generator.** Today's report text is generic
+pipeline wording, and its evidence is the first three responses in database order, not tied to any claim.
+It does not answer "where does Kasparro win or lose". The step would group results by engine and by
+branded/unbranded prompt, choose the three clearest wins or losses, attach stored excerpts and response IDs,
+and derive the three remedies from them. It changes report content and needs the real live-run results, so it starts after Step 3c finishes, and the
+design is shown to you before any code is written.
+
+The original wording of Step 4 follows.
 - [ ] **4a.** Rule baseline classifier (brand text present; recommendation and negative words near it).
 - [ ] **4b.** `tools/run_evaluation.py`: one command that scores baseline and model on the same labelled
   cases (per-label precision and recall, coverage, failures), checks the score arithmetic separately,

@@ -23,6 +23,8 @@ py -3 -m pip install -e ".[dev]"            # setup
 py -3 tools\check_pack.py                   # input pack integrity (run first)
 py -3 -m pytest -q                          # all tests (no network, no model needed)
 py -3 -m pytest tests\test_reports.py -q    # one file while iterating
+py -3 tools\run_evaluation.py               # baseline vs frozen model comparison -> evaluation/comparison-report.md (no network)
+py -3 tools\run_live_analysis.py            # PLAN ONLY; sending needs --confirm-send, ask the owner first
 git diff --check                            # whitespace check
 py -3 -m uvicorn backend.app.main:app --reload   # run API; docs at http://127.0.0.1:8000/docs
 ```

@@ -178,6 +178,12 @@ restarts is marked `interrupted` at startup. Full resume is out of scope.
   `KASPARRO_GROQ_MODEL=openai/gpt-oss-120b` for any real run.
 - No model has yet processed all 150 answers. Until it does, no report built from real model output
   exists.
+- `py -3 tools\run_evaluation.py` compares a naive keyword baseline (`tools/rule_baseline.py`, cue lists
+  fixed in advance) with the frozen Groq results on the same labelled cases, with no network call, and
+  writes `evaluation/comparison-report.md` and `.json`. On the 8 held-out cases both get 4 of 8 exact
+  passes, but the model only validated 5 of 8 and missed the one recommendation case, as did the
+  baseline. The baseline is perfect on "mentioned" and "position" and weak on "negative". Single run
+  and small sample; see the report's own list of limits.
 - 12 supplied responses were labelled by hand before tuning (4 per engine; 4 for development, 8
   held out), plus 2 clearly marked synthetic edge cases. See `evaluation/labels-v1.json`.
 
