@@ -40,6 +40,8 @@ LIMITS = (
     "No LLM judges anything here; every comparison is a deterministic rule against the owner's labels.",
     "Quote traceability (an excerpt occurs verbatim in the answer) is not semantic correctness.",
 )
+MODEL_LABEL = "Model (one recorded run; repeatability not tested)"
+ENGINE_NAMES = {"chatgpt": "ChatGPT", "gemini": "Gemini", "aimode": "Google AI Mode"}
 EXECUTION_MODES = {
     "baseline": "rules baseline (tools/rule_baseline.py), no model",
     "model": "frozen hosted_groq artifact (openai/gpt-oss-120b), read from evaluation/, not rerun",
@@ -204,14 +206,48 @@ def seeded_defect_check() -> dict:
     }
 
 
+def format_metric(value: float | None) -> str:
+    return "n/a" if value is None else f"{value:.3f}"
+
+
+def format_percent(value: float) -> str:
+    return f"{value * 100:.1f}%"
+
+
+def yes_no(flag: bool) -> str:
+    return "yes" if flag else "no"
+
+
+def case_name(response_id: str, labels: dict) -> str:
+    """Readable name of a labelled case, for example 'Google AI Mode, prompt 004'."""
+    for case in labels["supplied_cases"]:
+        if case["response_id"] == response_id:
+            engine = ENGINE_NAMES.get(case["engine"], case["engine"])
+            return f"{engine}, prompt {case['prompt_id'].rsplit(':', 1)[-1]}"
+    return "Unknown case"
+
+
+def failure_reason(error: str) -> str:
+    if "does not match the expected schema" in error:
+        return "Groq rejected the model JSON: it did not match the required schema"
+    if "Negative characterization requires a brand mention" in error:
+        return "Model output broke the contract: negative characterization without a brand mention"
+    return "Model call failed"
+
+
+def describe_failed_case(failure: dict, labels: dict) -> str:
+    return f"{case_name(failure['response_id'], labels)}: {failure_reason(failure['last_attempt_error'])}"
+
+
 def metric_row(summary: dict, field: str) -> str:
     metric = summary["per_label"][field]
     if field == "observable_position":
-        return f"| {field} | {metric['agreement']:.3f} | n/a | n/a | matches {metric['matches']}/{summary['total_cases']} |"
-    precision = "n/a" if metric["precision"] is None else f"{metric['precision']:.3f}"
-    recall = "n/a" if metric["recall"] is None else f"{metric['recall']:.3f}"
-    counts = f"tp {metric['tp']} fp {metric['fp']} fn {metric['fn']} tn {metric['tn']}"
-    return f"| {field} | {metric['agreement']:.3f} | {precision} | {recall} | {counts} |"
+        return f"| {field} | {format_metric(metric['agreement'])} | n/a | n/a | - | - | - | - |"
+    counts = " | ".join(str(metric[key]) for key in ("tp", "fp", "fn", "tn"))
+    return (
+        f"| {field} | {format_metric(metric['agreement'])} | {format_metric(metric['precision'])} | "
+        f"{format_metric(metric['recall'])} | {counts} |"
+    )
 
 
 def section_markdown(title: str, block: dict) -> list[str]:
@@ -225,46 +261,133 @@ def section_markdown(title: str, block: dict) -> list[str]:
     ]
     if block.get("note"):
         lines.append(f"- Note: {block['note']}")
-    lines += ["", "| Label | Agreement | Precision | Recall | Counts |", "|---|---:|---:|---:|---|"]
+    lines += ["", "| Label | Agreement | Precision | Recall | TP | FP | FN | TN |", "|---|---:|---:|---:|---:|---:|---:|---:|"]
     lines += [metric_row(summary, field) for field in FIELDS]
-    for failure in block.get("failed_cases", []):
-        lines.append("")
-        lines.append(f"- Failed case `{failure['response_id']}`: {failure['last_attempt_error']}")
-    lines.append("")
+    position = summary["per_label"]["observable_position"]
+    lines += [
+        "",
+        f"observable_position is graded by exact equality: {position['matches']} of {summary['total_cases']} cases matched.",
+        "",
+    ]
     return lines
 
 
-def markdown_report(doc: dict) -> str:
-    lines = ["# Baseline versus frozen Groq comparison", "", "## What this does and does not show", ""]
-    lines += [f"- {item}" for item in LIMITS]
+def headline_markdown(doc: dict) -> list[str]:
+    lines = [
+        "| System | Valid results | Coverage | Exact-match cases | brand_mentioned agreement "
+        "| recommended agreement | negative_characterization agreement |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    systems = ((MODEL_LABEL, doc["model_held_out"]), ("Keyword baseline", doc["baseline_held_out"]))
+    for name, block in systems:
+        summary = block["summary"]
+        total = summary["total_cases"]
+        agreement = [format_metric(summary["per_label"][field]["agreement"]) for field in FIELDS[:3]]
+        lines.append(
+            f"| {name} | {summary['validated_cases']}/{total} | {format_percent(summary['validation_coverage'])} "
+            f"| {summary['passed_cases']}/{total} | " + " | ".join(agreement) + " |"
+        )
+    return lines
+
+
+def confusion_markdown(doc: dict) -> list[str]:
+    model = doc["model_held_out"]["summary"]
+    baseline = doc["baseline_held_out"]["summary"]
+    lines = [
+        "Rows are the owner's label (Actual), columns are the system's answer (Predicted). "
+        "Failed model cases are excluded from the model matrices, so they cover "
+        f"{model['validated_cases']} of {model['total_cases']} cases; the baseline covers all {baseline['total_cases']}.",
+        "",
+    ]
+    for field in FIELDS[:3]:
+        m, b = model["per_label"][field], baseline["per_label"][field]
+        lines += [
+            f"**{field}**",
+            "",
+            "| Actual | Model predicted yes | Model predicted no | Baseline predicted yes | Baseline predicted no |",
+            "|---|---:|---:|---:|---:|",
+            f"| Actual yes | {m['tp']} | {m['fn']} | {b['tp']} | {b['fn']} |",
+            f"| Actual no | {m['fp']} | {m['tn']} | {b['fp']} | {b['tn']} |",
+            "",
+        ]
+    return lines
+
+
+def failed_cases_markdown(doc: dict, labels: dict) -> list[str]:
+    lines = []
+    for title, key in (("Held-out", "model_held_out"), ("Development", "model_development")):
+        lines += [f"- {title}: {describe_failed_case(failure, labels)}" for failure in doc[key]["failed_cases"]]
+    return lines or ["No failed cases."]
+
+
+def markdown_report(doc: dict, labels: dict) -> str:
+    held_out = doc["model_held_out"]["summary"]["total_cases"]
+    development = doc["model_development"]["summary"]["total_cases"]
+    synthetic = doc["baseline_synthetic"]["summary"]["total_cases"]
+    cross = doc["cross_checks"]
+    arithmetic = doc["score_arithmetic"]
+    evidence = doc["report_evidence_check"]
+    lines = [
+        "# Kasparro AI visibility classifier: model versus keyword baseline",
+        "",
+        f"Evaluation comparison report. Label set: {labels['label_set_version']}.",
+        "",
+        "This report compares one frozen language model run (openai/gpt-oss-120b via Groq) with a simple keyword "
+        "baseline on the same labelled cases. Both are scored against the project owner's labels for four fields "
+        "of each archived AI answer. It is written for a reviewer who has not seen the project. "
+        "Nothing here is run over the network; the model results are read from saved files.",
+        "",
+        "Caveat: single frozen model run, owner-written labels, model quality unverified.",
+        "",
+        f"## Headline results (held-out set, {held_out} cases)",
+        "",
+    ]
+    lines += headline_markdown(doc)
     lines += [
+        "",
+        "Agreement is counted over all cases in the set, so a failed model result lowers the model's agreement.",
+        "",
+        "## How to read the metrics",
+        "",
+        "- Agreement = (TP + TN) / all cases in the set. A failed result counts as not agreeing.",
+        "- Precision = TP / (TP + FP). Recall = TP / (TP + FN). Both show n/a when the denominator is zero.",
+        "- TP, FP, FN, TN compare the owner's label (Actual) with the system's answer (Predicted). "
+        "TP = both yes; FP = system yes, owner no; FN = system no, owner yes; TN = both no.",
+        "- Coverage = validated results / total cases. A result is validated when the model output passed the contract check.",
+        "- Exact match = all four fields correct for a case.",
+        "- observable_position is graded by exact equality with the owner's label, not by precision and recall.",
+        "- Failed results are not counted as absence: they are left out of TP, FP, FN and TN.",
+        "",
+        f"## Held-out final check ({held_out} cases)",
         "",
         f"- Baseline: {EXECUTION_MODES['baseline']}.",
         f"- Model: {EXECUTION_MODES['model']}. The model was not run on the synthetic cases.",
         "",
-        "## Held-out cases (8)",
-        "",
     ]
-    lines += section_markdown("Model (single run, unverified)", doc["model_held_out"])
+    lines += section_markdown(MODEL_LABEL, doc["model_held_out"])
     lines += section_markdown("Baseline", doc["baseline_held_out"])
-    lines += ["## Development cases (4)", ""]
-    lines += section_markdown("Model (single run, unverified)", doc["model_development"])
+    lines += ["### Confusion matrices", ""]
+    lines += confusion_markdown(doc)
+    lines += [f"## Development cases ({development})", ""]
+    lines += section_markdown(MODEL_LABEL, doc["model_development"])
     lines += section_markdown("Baseline", doc["baseline_development"])
-    lines += ["## Synthetic cases (2)", "", "The model was not run on synthetic cases.", ""]
+    lines += [f"## Synthetic edge cases ({synthetic})", "", "The model was not run on synthetic cases.", ""]
     lines += section_markdown("Baseline", doc["baseline_synthetic"])
-    cross = doc["cross_checks"]
+    lines += ["## Failed cases", ""] + failed_cases_markdown(doc, labels) + [""]
     lines += [
-        "## Cross-checks",
+        "## Integrity checks",
         "",
-        f"- Held-out artifact summary equals recomputed summary: {cross['held_out_summary_matches_artifact']}",
-        "- Development artifact stores no summary, so only per-case passed flags are compared.",
-        f"- Stored passed flags equal recomputation from labels (held-out): {cross['held_out_passed_flags_match']}",
-        f"- Stored passed flags equal recomputation from labels (development): {cross['development_passed_flags_match']}",
+        "### Cross-checks",
         "",
-    ]
-    arithmetic = doc["score_arithmetic"]
-    lines += [
-        "## Score arithmetic",
+        "| Check | Result |",
+        "|---|---|",
+        f"| Held-out artifact summary equals recomputed summary | {yes_no(cross['held_out_summary_matches_artifact'])} |",
+        f"| Stored passed flags equal recomputation from labels (held-out) | {yes_no(cross['held_out_passed_flags_match'])} |",
+        f"| Stored passed flags equal recomputation from labels (development) | {yes_no(cross['development_passed_flags_match'])} |",
+        "",
+        "The development artifact stores no summary, so only per-case passed flags are compared.",
+        "",
+        "### Score arithmetic",
         "",
         "Independent function (absent 0, mentioned 25, recommended 100) versus `visibility_score`.",
         "",
@@ -273,24 +396,28 @@ def markdown_report(doc: dict) -> str:
         f"{arithmetic['from_validated_model_results']} from validated model results)",
         f"- Mismatches: {arithmetic['mismatches']}",
         "",
-    ]
-    evidence = doc["report_evidence_check"]
-    lines += [
-        "## Report evidence check",
+        "### Report evidence check",
         "",
         f"**{evidence['label']}**",
         "",
         f"- Results in the stub analysis: {evidence['results_checked']}",
         f"- Problems found in the clean report: {len(evidence['clean_problems'])}",
+        "",
+        "| Seeded defect | Flagged |",
+        "|---|---|",
     ]
-    for name, flagged in evidence["seeded_defects_flagged"].items():
-        lines.append(f"- Seeded defect `{name}` flagged: {flagged}")
+    lines += [f"| {name.replace('_', ' ')} | {yes_no(flagged)} |" for name, flagged in evidence["seeded_defects_flagged"].items()]
+    lines += ["", "## Limits", ""]
+    lines += [f"- {item}" for item in LIMITS]
     lines.append("")
     return "\n".join(lines)
 
 
-def build_document() -> dict:
-    labels = json.loads((EVALUATION / "labels-v1.json").read_text(encoding="utf-8"))
+def load_labels() -> dict:
+    return json.loads((EVALUATION / "labels-v1.json").read_text(encoding="utf-8"))
+
+
+def build_document(labels: dict) -> dict:
     answers = {
         row["response_id"]: row["answer_text"]
         for row in (
@@ -348,12 +475,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path, default=EVALUATION)
     args = parser.parse_args(argv)
-    document = build_document()
+    labels = load_labels()
+    document = build_document(labels)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "comparison-report.json").write_text(
         json.dumps(document, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
-    (args.output_dir / "comparison-report.md").write_text(markdown_report(document), encoding="utf-8")
+    (args.output_dir / "comparison-report.md").write_text(markdown_report(document, labels), encoding="utf-8")
     print(f"Report: {args.output_dir / 'comparison-report.md'}")
     cross = document["cross_checks"]
     healthy = (

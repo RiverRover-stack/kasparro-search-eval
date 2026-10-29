@@ -116,6 +116,7 @@ py -3 -m pip install -e ".[dev]"
 py -3 tools\check_pack.py        # checks the input data is intact
 py -3 -m pytest -q               # runs all tests, no internet needed
 py -3 tools\run_evaluation.py    # model vs keyword rule comparison, no internet needed
+py -3 tools\make_comparison_pdf.py     # the same comparison as a PDF with charts (needs the optional report packages)
 py -3 tools\export_analysis_output.py   # rebuilds evaluation/analysis-output.json from the saved live-run
                                          # database (backend\live-run.db, not in Git); will not overwrite a file
 ```
@@ -130,7 +131,8 @@ py -3 -m uvicorn backend.app.main:app
 
 Then open `http://127.0.0.1:8000/docs`. More notes are in [`docs/onboarding.md`](docs/onboarding.md).
 
-Exact package versions the project was tested with are in `requirements-tested.txt`.
+Exact package versions the project was tested with are in `requirements-tested.txt`. The PDF report needs two
+extra packages: `py -3 -m pip install -e ".[report]"`.
 
 ### No key needed, and the real model
 
@@ -278,3 +280,5 @@ test results.
 - [`docs/decision-note.md`](docs/decision-note.md): the main choices, the biggest risks and what was left out.
 - [`evaluation/analysis-output.json`](evaluation/analysis-output.json): the live-run numbers, findings and open problems.
 - [`evaluation/comparison-report.md`](evaluation/comparison-report.md): the full model-versus-rule results.
+- [`evaluation/comparison-report.pdf`](evaluation/comparison-report.pdf): the same results as a PDF with charts and
+  confusion matrices.

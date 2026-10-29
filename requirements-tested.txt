@@ -6,3 +6,7 @@ SQLAlchemy==2.0.46
 uvicorn==0.40.0
 httpx==0.28.1
 pytest==9.0.3
+
+# Optional, only for the PDF report (py -3 -m pip install -e ".[report]")
+matplotlib==3.10.5
+reportlab==4.4.10
